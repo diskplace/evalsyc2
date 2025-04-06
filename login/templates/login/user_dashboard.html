@@ -1,0 +1,42 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+{% block css %} <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}"> {% endblock %}
+
+{% block title %}<title>User Dashboard</title>{% endblock %}
+
+{% block body%}
+
+
+    <nav class="navbar">
+
+
+        <ul class="nav-links">
+            <li><img class="logo" src="{% static 'asset/logo1.png' %}" alt="logo"></li>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="">Evalute</a></li>
+            <li><a href="">Output</a></li>
+            <li><a href="">Certicate</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+        
+                <li>{{user.username}}</li>
+   
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+
+            {% endif %}
+       
+        </ul>
+
+    </nav>
+
+    <div class="container">
+        <h3>Overview</h3>
+    </div>
+
+    
+
+
+
+{% endblock %}

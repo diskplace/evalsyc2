@@ -1,0 +1,66 @@
+
+body{
+    background-color: #DFE6FC;
+}
+
+ul {
+    list-style-type: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+
+li {
+    display: inline;
+    font-weight: bold;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    text-align: center;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+a:hover {
+    background-color: hsl(207, 79%, 50%);
+}
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+}
+
+.logo{
+    width: auto;
+    height: 50px;
+    margin-left: 1rem;
+
+}
+
+.webinar{
+    margin-top: 4rem;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5%;
+}
+
+.webinar_detail{
+    width: 100px;
+    height: auto;
+}
+.description{
+    font-size: .8rem;
+}
+
+.overview{
+    margin:100rem;
+    margin-top: 400rem;
+}

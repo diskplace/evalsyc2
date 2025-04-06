@@ -1,0 +1,109 @@
+{% extends "login/layout.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/makewebinar.css' %}">
+{% endblock %}
+
+{% block body %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3>Create Webinar</h3>
+        <div class="form-group">
+            <label for="title">Webinar Topic:</label>
+            <input name="title" id="title" required class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea name="description" id="description" required class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="number_of_speaker">Number of Speakers:</label>
+            <input type="number" min="1" max="10" name="number_of_speaker" id="number_of_speaker" required class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="event_type">Event Type:</label>
+            <select name="event_type" id="event_type" class="form-control">
+                <option value="recognition">Recognition</option>
+                <option value="workshop">Workshop</option>
+                <option value="seminar">Seminar</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" id="start_date" required class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="until_date">Until Date:</label>
+            <input type="date" name="until_date" id="until_date" required class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="event_time">Event Time:</label>
+            <input type="time" name="event_time" id="event_time" required class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="banner">Event Banner:</label>
+            <input type="file" name="banner" id="banner" required class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="venue">Venue:</label>
+            <input name="venue" id="venue" required class="form-control">
+        </div>
+
+        <div id="speakers_container"></div>
+
+        <div class="form-group">
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </div>
+    </form>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const date_today = new Date().toISOString().split("T")[0];
+        const start_date_input = document.getElementById("start_date");
+        const until_date_input = document.getElementById("until_date");
+        
+        start_date_input.min = date_today;
+        until_date_input.min = date_today;
+        
+        document.addEventListener("change", function () {
+            until_date_input.min = start_date_input.value;
+        });
+
+        const inputField = document.getElementById("number_of_speaker");
+        const speakersContainer = document.getElementById("speakers_container");
+
+        inputField.addEventListener("input", function () {
+            speakersContainer.innerHTML = ""; 
+
+            const numSpeakers = parseInt(inputField.value);
+            
+    
+            if (!isNaN(numSpeakers) && numSpeakers >= 1 && numSpeakers <= 10) {
+                for (let i = 1; i <= numSpeakers; i++) {
+                    const div = document.createElement("div");
+                    div.classList.add("form-group");
+                    div.innerHTML = `
+                        <h4>Speaker ${i}</h4>
+                        <label for="speaker_name${i}">Name:</label>
+                        <input type="text" id="speaker_name${i}" name="speaker_name${i}" required class="form-control">
+                        
+                        <label for="speaker_email${i}">Email:</label>
+                        <input type="email" id="speaker_email${i}" name="speaker_email${i}" required class="form-control">
+                    `;
+                    speakersContainer.appendChild(div);
+                }
+            }
+        });
+    });
+    </script>
+{% endblock %}

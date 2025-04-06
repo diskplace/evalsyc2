@@ -1,0 +1,31 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+
+{% block css %} <link rel="stylesheet" href="{% static 'css/register.css' %}"> {% endblock %}
+
+
+{% block body %}
+
+<div class="container-fluid registration-container">
+    <form action="{% url 'register' webinar.id %}" method="post">
+        {% csrf_token %}
+        <h2 class="form-title">Register</h2>
+
+        <div class="form-group">
+            <label for="school_id">School ID:</label>
+            <input type="text" name="school_id" id="school_id" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+        </div>
+
+        <input class="submit-button" type="submit" value="Register">
+    </form>
+
+    <div><a href="{% url 'index' %}">Back to the homepage</a></div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,283 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+{% block css %} <link rel="stylesheet" href="{% static 'css/evaluation.css' %}"> {% endblock %}
+{% block body %}
+
+<h1>Evaluation Form</h1>
+<h3>Teachers' Professional Development & Training</h3>
+<p>SGOD Chief, Irene L. Elizalde</p>
+<div class="date" >Date</div>
+
+<div class="container-fluid">
+    <form action="{% url 'questionaire' webinar.id %}" method="post">
+        {% csrf_token %}
+        
+
+        <div class="container-fluid">
+            <label><input type="radio" name="sex">Male
+            </label>
+            <labeL>
+                <input type="radio" name="sex">Female
+
+            </labeL>
+            
+        </div>
+        <div>Rating Scale
+            <div>5-Strongly Agree</div>
+            <div>4-Agree</div>
+            <div>3-Neutral</div>
+            <div>2-Disagree</div>
+            <div>1-Strongly Disagree</div>
+        </div>
+
+
+        <div><div>Speaker Evaluation</div>
+        <div>Question</div>
+        <div class="container-fluid">
+            <label> 1. Knowledge of subject matter</label>
+            <input type="radio" name="q1-speaker" id="q1" value="1"> 1
+            <input type="radio" name="q1-speaker" id="q1" value="2"> 2
+            <input type="radio" name="q1-speaker" id="q1" value="3"> 3
+            <input type="radio" name="q1-speaker" id="q1" value="4"> 4
+            <input type="radio" name="q1-speaker" id="q1" value="5"> 5
+        </div>
+        <div class="container-fluid">
+            <label>2. Clarity of presentation</label>
+            <input type="radio" name="q2-speaker" id="q1" value="1"> 1
+            <input type="radio" name="q2-speaker" id="q1" value="2"> 2
+            <input type="radio" name="q2-speaker" id="q1" value="3"> 3
+            <input type="radio" name="q2-speaker" id="q1" value="4"> 4
+            <input type="radio" name="q2-speaker" id="q1" value="5"> 5
+        </div>
+        <div class="container-fluid">
+            <label>3. Reponsiveness to questions</label>
+            <input type="radio" name="q3-speaker" id="q3-speaker" value="1"> 1
+            <input type="radio" name="q3-speaker" id="q1" value="2"> 2
+            <input type="radio" name="q3-speaker" id="q1" value="3"> 3
+            <input type="radio" name="q3-speaker" id="q1" value="4"> 4
+            <input type="radio" name="q3-speaker" id="q1" value="5"> 5
+        </div>
+        <div class="container-fluid">
+            <label>4. Engagement with audience</label>
+            <input type="radio" name="q4-speaker" id="q1" value="1"> 1
+            <input type="radio" name="q4-speaker" id="q1" value="2"> 2
+            <input type="radio" name="q4-speaker" id="q1" value="3"> 3
+            <input type="radio" name="q4-speaker" id="q1" value="4"> 4
+            <input type="radio" name="q4-speaker" id="q1" value="5"> 5
+        </div>
+        <div class="container-fluid">
+            <label>5. The speaker manage time effectively</label>
+            <input type="radio" name="q5-speaker" id="q1" value="1"> 1
+            <input type="radio" name="q5-speaker" id="q1" value="2"> 2
+            <input type="radio" name="q5-speaker" id="q1" value="3"> 3
+            <input type="radio" name="q5-speaker" id="q1" value="4"> 4
+            <input type="radio" name="q5-speaker" id="q1" value="5"> 5
+        </div>
+ 
+    
+    </div>
+    <div class="container-fluid">Venue Evaluation
+        <label> 1. Comfort and seating arrangement</label>
+        <input type="radio" name="q1-speaker" id="q1" value="1"> 1
+        <input type="radio" name="q1-speaker" id="q1" value="2"> 2
+        <input type="radio" name="q1-speaker" id="q1" value="3"> 3
+        <input type="radio" name="q1-speaker" id="q1" value="4"> 4
+        <input type="radio" name="q1-speaker" id="q1" value="5"> 5
+    </div>
+    <div class="container-fluid">
+        <label>2. Room temperature</label>
+        <input type="radio" name="q2-speaker" id="q1" value="1"> 1
+        <input type="radio" name="q2-speaker" id="q1" value="2"> 2
+        <input type="radio" name="q2-speaker" id="q1" value="3"> 3
+        <input type="radio" name="q2-speaker" id="q1" value="4"> 4
+        <input type="radio" name="q2-speaker" id="q1" value="5"> 5
+    </div>
+    <div class="container-fluid">
+        <label>3. Lighting conditions</label>
+        <input type="radio" name="q3-speaker" id="q3-speaker" value="1"> 1
+        <input type="radio" name="q3-speaker" id="q1" value="2"> 2
+        <input type="radio" name="q3-speaker" id="q1" value="3"> 3
+        <input type="radio" name="q3-speaker" id="q1" value="4"> 4
+        <input type="radio" name="q3-speaker" id="q1" value="5"> 5
+    </div>
+    <div class="container-fluid">
+        <label>4. Audio/visual equipment</label>
+        <input type="radio" name="q4-speaker" id="q1" value="1"> 1
+        <input type="radio" name="q4-speaker" id="q1" value="2"> 2
+        <input type="radio" name="q4-speaker" id="q1" value="3"> 3
+        <input type="radio" name="q4-speaker" id="q1" value="4"> 4
+        <input type="radio" name="q4-speaker" id="q1" value="5"> 5
+    </div>
+    <div class="container-fluid">
+        <label>Cleanliness</label>
+        <input type="radio" name="q5-speaker" id="q1" value="1"> 1
+        <input type="radio" name="q5-speaker" id="q1" value="2"> 2
+        <input type="radio" name="q5-speaker" id="q1" value="3"> 3
+        <input type="radio" name="q5-speaker" id="q1" value="4"> 4
+        <input type="radio" name="q5-speaker" id="q1" value="5"> 5
+    </div>
+
+
+</div>
+<div class="container-fluid">Meals and refreshments
+    <label> 1. Quality of food provided</label>
+    <input type="radio" name="q1-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q1-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q1-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q1-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q1-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>2. Variety of food options</label>
+    <input type="radio" name="q2-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q2-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q2-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q2-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q2-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>3. Service</label>
+    <input type="radio" name="q3-speaker" id="q3-speaker" value="1"> 1
+    <input type="radio" name="q3-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q3-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q3-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q3-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>4. Timelines of meal servive</label>
+    <input type="radio" name="q4-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q4-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q4-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q4-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q4-speaker" id="q1" value="5"> 5
+</div>
+
+
+</div>
+<div class="container-fluid">Program Management Team
+    <label> 1.Reponsiveness to participant needs</label>
+    <input type="radio" name="q1-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q1-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q1-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q1-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q1-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>2. Efficiency in managing the program</label>
+    <input type="radio" name="q2-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q2-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q2-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q2-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q2-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>3. Communication of program details</label>
+    <input type="radio" name="q3-speaker" id="q3-speaker" value="1"> 1
+    <input type="radio" name="q3-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q3-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q3-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q3-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>4. Problem-solving abilities</label>
+    <input type="radio" name="q4-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q4-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q4-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q4-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q4-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>5. The speaker manage time effectively</label>
+    <input type="radio" name="q5-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q5-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q5-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q5-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q5-speaker" id="q1" value="5"> 5
+</div>
+
+
+</div>
+<div class="container-fluid">
+    <label> 1. Knowledge of subject matter</label>
+    <input type="radio" name="q1-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q1-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q1-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q1-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q1-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>2. Clarity of presentation</label>
+    <input type="radio" name="q2-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q2-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q2-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q2-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q2-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>3. Reponsiveness to questions</label>
+    <input type="radio" name="q3-speaker" id="q3-speaker" value="1"> 1
+    <input type="radio" name="q3-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q3-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q3-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q3-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>4. Engagement with audience</label>
+    <input type="radio" name="q4-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q4-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q4-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q4-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q4-speaker" id="q1" value="5"> 5
+</div>
+<div class="container-fluid">
+    <label>5. The speaker manage time effectively</label>
+    <input type="radio" name="q5-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q5-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q5-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q5-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q5-speaker" id="q1" value="5"> 5
+</div>
+
+
+</div>
+<div class="container-fluid">
+    <label> 1. Knowledge of subject matter</label>
+    <input type="radio" name="q1-speaker" id="q1" value="1"> 1
+    <input type="radio" name="q1-speaker" id="q1" value="2"> 2
+    <input type="radio" name="q1-speaker" id="q1" value="3"> 3
+    <input type="radio" name="q1-speaker" id="q1" value="4"> 4
+    <input type="radio" name="q1-speaker" id="q1" value="5"> 5
+</div>
+
+
+</div>
+
+        <textarea style="width: 500px; height: 500px;">
+
+        </textarea>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div><a href="{% url 'index' %}">Back to the homepage</a></div>
+</div>
+
+
+<script>
+
+
+    document.addEventListener("DOMContentLoaded", function(){
+        
+        const today= new Date();
+        const date= document.getElementsByClassName('date');
+        date.innerHTML=today;
+    })
+    
+
+   
+</script>
+
+{% endblock %}
+
+
