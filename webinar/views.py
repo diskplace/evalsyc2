@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import Webinar,WebinarAttendees,ResponseQuestionaire,Speaker
 from django.db.models import Avg,F
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 # Create your views here.
@@ -46,18 +47,41 @@ def webinar_detail(request, id):
 
 
 def register(request, id):
-    webinar=get_object_or_404(Webinar, id=id)
-    if request.method=='POST':
-        school_id=request.POST.get('school_id')
-        email=request.POST.get('email')
-        
-        attendee=WebinarAttendees(webinar=webinar,school_id=school_id, email=email)
-        attendee.save()
-        return redirect(register, webinar.id)
-    return render(request, 'webinar/register.html',{
-        'webinar':webinar
-    })
+    webinar = get_object_or_404(Webinar, id=id)
 
+    if request.method == 'POST':
+        school_id = request.POST.get('school_id')
+        email = request.POST.get('email')
+
+        attendee = WebinarAttendees(webinar=webinar, school_id=school_id, email=email)
+        attendee.save()
+
+        # Email subject and message
+        subject = f"Registration Confirmed: {webinar.title}"
+        message = (
+            f"Hello,\n\n"
+            f"You Are now Register \"{webinar.title}\".\n\n"
+            f"📅 Date: {webinar.start_date}\n"
+            f"📍 Location: {webinar.venue}\n\n"
+            f"We look forward to seeing you there!\n\n"
+            f"Best regards,\n"
+            f"The Webinar Team"
+        )
+
+  
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
+        )
+
+        return redirect(register, webinar.id)
+
+    return render(request, 'webinar/register.html', {
+        'webinar': webinar
+    })
 
 #validation
 def validation(request, id):
@@ -130,3 +154,8 @@ def average_result(request, id):
 
 
     })
+
+
+
+
+    

@@ -14,9 +14,9 @@
         <ul class="nav-links">
             <li><img class="logo" src="{% static 'asset/logo1.png' %}" alt="logo"></li>
             <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'user_dashboard' %}">Dashboard</a></li>
-            <li><a href="">Evaluation</a></li>
-            <li><a href="">Certicate</a></li>
+            <li><a href="{% url 'user_dashboard' %}">Events and Announcements</a></li>
+            <li><a href="">Evaluation Guidelines</a></li>
+            <li><a href="">About us</a></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}">Logout</a></li>
 

@@ -2,58 +2,121 @@
 
 {% load static %}
 
-{% block css %} <link rel="stylesheet" href="{% static 'css/result.css' %}"> {% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/result.css' %}">
+{% endblock %}
 
-{% block body%}
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 
+{% block body %}
 <div class="container-fluid">
-    <div> {{ webinar }} </div>
-    <div><img src="{{ webinar.banner.url }}" alt="works" style="height: 200px; width: auto;" ></div>
+    <h2>{{ webinar.title }}</h2>
 
+    <img src="{{ webinar.banner.url }}" alt="works">
 
-
-    
-     {{webinar.title}}
-
+    <div class="chart-container">
+        <div class="chart-box">
+            <canvas id="myPieChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <canvas id="myBarChart"></canvas>
+        </div>
+    </div>
 
     <table>
-        <tr>
-            <th>Question</th>
-            <th>average</th>
-        </tr>
-        <tr>
-            <td>Question 1</td>
-            <td> {{ average.q1|floatformat:2 }} </td>
-        </tr>
-        <tr>
-            <td>Question 2</td>
-            <td> {{ average.q2|floatformat:2 }} </td>
-        </tr>
-        <tr>
-            <td>Question 3</td>
-            <td> {{ average.q3|floatformat:2 }} </td>
-        </tr>
-        <tr>
-            <td>Question 4</td>
-            <td> {{ average.q4|floatformat:2 }} </td>
-        </tr>
-        <tr>
-            <td>Question 5</td>
-            <td> {{ average.q5|floatformat:2 }} </td>
-        </tr>
-        <tr>
-            <td>Question 6</td>
-            <td> {{ average.q6|floatformat:2 }} </td>
-        </tr>
-        <tr>
-            <td>Total</td>
-            <td> {{ total|floatformat:2 }} </td>
-        </tr>
-
+        <thead>
+            <tr><th>Question</th><th>Average</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Question 1</td><td>{{ average.q1|floatformat:2 }}</td></tr>
+            <tr><td>Question 2</td><td>{{ average.q2|floatformat:2 }}</td></tr>
+            <tr><td>Question 3</td><td>{{ average.q3|floatformat:2 }}</td></tr>
+            <tr><td>Question 4</td><td>{{ average.q4|floatformat:2 }}</td></tr>
+            <tr><td>Question 5</td><td>{{ average.q5|floatformat:2 }}</td></tr>
+            <tr><td>Question 6</td><td>{{ average.q6|floatformat:2 }}</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>{{ total|floatformat:2 }}</strong></td></tr>
+        </tbody>
     </table>
 
+
     <div><a href="{% url 'index' %}">Back to the homepage</a></div>
+</div>
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sampleData = {
+        labels: ["Question 1", "Question 2", "Question 3", "Question 4", "Question 5", "Question 6"],
+        data: [3.2, 4.5, 3.8, 4.0, 4.1, 3.9]
+    };
 
+    const colors = ['#4CAF50', '#2196F3', '#FFC107', '#FF5722', '#9C27B0', '#00BCD4'];
+
+    const pieCtx = document.getElementById('myPieChart').getContext('2d');
+    const barCtx = document.getElementById('myBarChart').getContext('2d');
+    const data = [
+        {{ average.q1|default:0 }},
+        {{ average.q2|default:0 }},
+        {{ average.q3|default:0 }},
+        {{ average.q4|default:0 }},
+        {{ average.q5|default:0 }},
+        {{ average.q6|default:0 }}
+    ];
+
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: sampleData.labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' },
+                title: {
+                    display: true,
+                    text: 'Average Scores (Pie Chart)'
+                }
+            }
+        }
+    });
+
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: data,
+            datasets: [{
+                label: 'Score',
+                data: sampleData.data,
+                backgroundColor: colors
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Average Scores (Bar Chart)'
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 5
+                }
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

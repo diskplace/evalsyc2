@@ -5,38 +5,109 @@
 
 {% block title %}<title>User Dashboard</title>{% endblock %}
 
-{% block body%}
+{% block body %}
+<nav class="sidebar">
+    <ul class="nav-links">
+        <li class="logo-section">
+            <img class="logo" src="{% static 'asset/logo1.png' %}" alt="logo"> 
+            <span>SDO Baliwag</span>
+        </li>
+        <li><a href="{% url 'user_dashboard' %}" class="active">Dashboard</a></li>
+        <li><a href="{% url 'calendar' %}">Calendar</a></li>
+        <li><a href="{% url 'evaluation_nav' %}">Evaluate</a></li>
+        <li><a href="{% url 'attendance' %}">Attendance</a></li>
+        <li><a href="{% url 'certificate' %}">Certificate</a><li>
+        <li><a href="{% url 'aboutus' %}">about us</a></li>
 
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+        {% endif %}
+    </ul>
+</nav>
 
-    <nav class="navbar">
+<div class="contents">
+    <div class="container-fluid">
+        <div class="dashboard-header">
+            <h1>Dashboard!</h1>
+        </div>
 
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h5 class="fw-bold">Upcoming Events</h5>
+                    {% for webinar in webinars %}
+                        <div class="border-bottom pb-2 mb-2 d-flex align-items-start">
+                            <img src="{{ webinar.banner.url }}" alt="{{ webinar.title }}" class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                            <div>
+                                <div class="text-muted">{{ webinar.date }}</div>
+                                <div>{{ webinar.title }}</div>
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h5 class="fw-bold">Past Events</h5>
+                    <div class="border-bottom pb-2 mb-2">
+                        <div class="text-muted">Mar 26, 2025</div>
+                        <div>Digital Transformation in Education Workshop</div>
+                        <span class="badge bg-success">Done</span>
+                    </div>
+                    <div class="border-bottom pb-2 mb-2">
+                        <div class="text-muted">Mar 26, 2025</div>
+                        <div>Educational Leadership & Innovation Summit</div>
+                        <span class="badge bg-success">Done</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <ul class="nav-links">
-            <li><img class="logo" src="{% static 'asset/logo1.png' %}" alt="logo"></li>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="">Evalute</a></li>
-            <li><a href="">Output</a></li>
-            <li><a href="">Certicate</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-        
-                <li>{{user.username}}</li>
-   
-            {% else %}
-                <li><a href="{% url 'login' %}">Login</a></li>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h6>Total events Attended</h6>
+                    <p>8 (Last attended: Mar 15, 2025)</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h6>Certificates Acquired</h6>
+                    <p>2 (Latest: AI in Business)</p>
+                </div>
+            </div>
+        </div>
 
-            {% endif %}
-       
-        </ul>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card p-3">
+                    <h6>Attendance Records</h6>
+                    <ul class="list-unstyled">
+                        <li>Mar 15, 2025 - Educational Leadership (6 hours) <span class="badge bg-success">Complete</span></li>
+                        <li>Mar 10, 2025 - Digital Transformation (4 hours) <span class="badge bg-success">Complete</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-    </nav>
-
-    <div class="container">
-        <h3>Overview</h3>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h6>Total Evaluations</h6>
+                    <p>5 (This Month)</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h6>Tasks Due</h6>
+                    <p>2 <span class="badge bg-warning text-dark">Pending</span></p>
+                </div>
+            </div>
+        </div>
     </div>
-
-    
-
-
+</div>
 
 {% endblock %}

@@ -6,12 +6,24 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib import messages
 import pyotp
+from django.http import JsonResponse
+
 from webinar.models import Webinar
 # Create your views here.
 
 
 def index(request):
     webinar=Webinar.objects.all()
+
+    if request.user.is_authenticated:
+        
+        if request.user.is_superuser:
+            return redirect('admin_panel')
+        else:
+            return render(request, 'login/user_dashboard.html', {
+            'webinars':webinar
+        })
+    
     return render(request, 'login/index.html',{
         'webinars':webinar
     })
@@ -103,9 +115,43 @@ def generate_otp(request):
 
     return render(request, 'login/otp.html', {'otp': otp_code,})
 
-
+#user
 def user_dashboard(request):
     return render(request, 'login/user_dashboard.html')
+
+
+#nav
+#calendar
+
+def calendar(request):
+    return render(request,"login/user_nav/calendar.html")
+
+def attendance(request):
+    return render(request, "login/user_nav/attendance.html")
+
+def aboutus(request):
+    return render(request, "login/user_nav/aboutus.html")
+
+def certificate(request):
+    return render(request, "login/user_nav/certificate.html")
+
+def evaluation_nav(request):
+    return render(request, "login/user_nav/evaluation.html")
+
+
+
+def event_data(request):
+    data=[]
+    webinars=Webinar.objects.all()
+    
+    for webinar in webinars:
+        data.append({
+            "title":webinar.title,
+            "start":webinar.start_date.isoformat()
+        })
+
+    return JsonResponse(data, safe=False)
+
 
 def admin_panel(request):
     webinars=Webinar.objects.all()
@@ -113,4 +159,3 @@ def admin_panel(request):
         'webinars':webinars
     })
 
-    
