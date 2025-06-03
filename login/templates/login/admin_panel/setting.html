@@ -1,0 +1,135 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+
+{% block title %}<title>Setting</title>{% endblock %}
+
+{% block css %} 
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/admin_bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/setting.css' %}">
+{% endblock %}
+
+{% block body%}
+
+
+<div class="topbar d-flex justify-content-end align-items-center px-4 py-3">
+  <div class="topbar-right d-flex align-items-center gap-3">
+      <a href="#" class="notification-icon position-relative">
+          <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
+      </a>
+      <span class="username fw-semibold">Michael Yumul</span>
+      <a class="profile">
+          <img src="{% static 'asset/2.jpg' %}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+      </a>
+  </div>
+</div>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="{% static 'asset/logo1.png' %}" alt="Logo" />
+      <h2>SDO Baliwag</h2>
+    </div>
+    <nav class="nav">
+        <a href="{% url 'events' %}" class="nav-item">Event</a>
+        <a href="{% url 'admin_calendar' %}" class="nav-item">Calendar</a>
+        <a href="{% url 'certificate_list' %}" class="nav-item">Certificate</a>
+        <a href="{% url 'users' %}" class="nav-item">Users</a>
+        <a href="{% url 'admin_setting' %}" class="nav-item active">Settting</a>
+    </nav>
+    <div class="logout" >
+      <a href="{% url 'logout' %}">
+        <img   src="{% static 'icons/exit.png' %}" alt="">
+        Logout
+      </a> 
+    </div>
+  </aside>
+
+  <div class="settings-container">
+    <h2>Settings</h2>
+
+    <div class="card">
+      <h4>Personal Information</h4>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="Bronny" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="bronny123@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="+1 (555) 123-4567" />
+        </div>
+        <div class="form-group">
+          <label>School/Institution</label>
+          <input type="text" placeholder="Btech" />
+        </div>
+      </div>
+    </div>
+
+   
+    <div class="card">
+      <h4>Notification Preferences</h4>
+      <div class="notif-item">
+        <div>
+          <strong>Email Notifications</strong>
+          <p>Receive email updates about your account</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="notif-item">
+        <div>
+          <strong>SMS Notifications</strong>
+          <p>Receive text messages for important updates</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <h4>Security Settings</h4>
+      <div class="security-buttons">
+        <div>
+          <p>Change Password</p>
+          <button class="secondary">Update Password</button>
+        </div>
+        <div>
+          <p>Two-Factor Authentication</p>
+          <button class="secondary">Enable 2FA</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-buttons">
+      <button class="cancel">Cancel</button>
+      <button class="primary">Save Changes</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container d-flex justify-content-between flex-wrap">
+      <div>
+          <p>Empowering organizations through effective performance evaluation</p>
+      </div>
+      <div>
+          <h6>Contact Us</h6>
+          <p>Baliwag City North Central School, Lopez Jaena St.</p>
+          <p><a href="mailto:sdo@deped.com" class="text-light">sdo@deped.com</a></p>
+      </div>
+  </div>
+</footer>
+
+
+
+{% endblock %}

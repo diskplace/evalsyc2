@@ -35,11 +35,32 @@ class WebinarAttendees(models.Model):
 class ResponseQuestionaire(models.Model):
       webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE)
       user=models.ForeignKey(User, on_delete=models.CASCADE)
-      q1=models.IntegerField()
-      q2=models.IntegerField()
-      q3=models.IntegerField()
-      q4=models.IntegerField()
-      q5=models.IntegerField()
-      q6=models.IntegerField()
+      q1=models.IntegerField(null=True)
+      q2=models.IntegerField(null=True)
+      q3=models.IntegerField(null=True)
+      q4=models.IntegerField(null=True)
+      q5=models.IntegerField(null=True)
+      q6=models.IntegerField(null=True)
 
-    
+
+
+class Test_Question(models.Model):
+    webinar = models.ForeignKey(Webinar, on_delete=models.CASCADE, blank=True, null=True ,related_name="question")
+    question = models.CharField(max_length=500 , blank=True, null=True)
+    test_type = models.CharField(max_length=30, blank=True, null=True) 
+    question_type = models.CharField(max_length=50, blank=True, null=True) 
+    correct_answered = models.CharField(max_length=200, blank=True, null=True)  
+
+class Choice(models.Model):
+    question=models.ForeignKey(Test_Question,related_name="choices", on_delete=models.CASCADE,blank=True, null=True)
+    text_option=models.CharField(max_length=200, blank=True, null=True)
+    is_correct=models.BooleanField(default=False)
+
+
+
+class TestResponse(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True )
+    question=models.ForeignKey(Test_Question, on_delete=models.CASCADE,blank=True, null=True, related_name='test_reponse')
+    user_input=models.CharField(max_length=200,blank=True, null=True)
+    is_correct=models.BooleanField(default=False)
+

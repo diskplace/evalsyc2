@@ -48,6 +48,7 @@ STATICFILES_DIRS = [
 INSTALLED_APPS = [
     'login',
     'webinar',
+    'exam_portal',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

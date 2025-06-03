@@ -1,0 +1,37 @@
+{% extends "login/layout.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/makewebinar.css' %}">
+{% endblock %}
+
+{% block body %}
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    {% for question in questions %}
+        <div class="question-block">
+            <h3>{{ question.question }}</h3>
+
+            {% if question.question_type == 'FB' %}
+                <input type="text" name="user_input_{{ question.id }}" id="user_input_{{ question.id }}" placeholder="Answer here">
+            
+            {% elif question.question_type == 'MC' %}
+                {% for choice in question.choices.all %}
+                    <label>
+                        <input type="radio" 
+                               name="user_input_{{ question.id }}" 
+                               value="{{ choice.id }}">
+                        {{ choice.text_option }}
+                    </label><br>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <hr>
+    {% endfor %}
+
+    <input type="submit" value="Submit Answers">
+</form>
+
+{% endblock %}

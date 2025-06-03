@@ -1,0 +1,265 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+
+{% block css %} 
+
+<link rel="stylesheet" href="{% static 'css/create_test.css' %}?={{ timestamp }}">
+
+{% endblock %}
+
+{% block title %} <title>Create Test</title> {% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Create New Test Question</h1>
+    
+    <div class="instructions">
+        <h3>How to create a question:</h3>
+        <ol>
+            <li>Enter your question in the field provided</li>
+            <li>Select the question type (Fill-in-the-blank, Multiple Choice, or True/False)</li>
+            <li><strong>Complete all required answer fields</strong> that appear for your selected question type</li>
+            <li>Click "Add Question" to submit</li>
+        </ol>
+        <p><strong>Note:</strong> You must provide both a question and its correct answer before submitting.</p>
+    </div>
+
+    <form action="{% url 'create_test' id %}" method="post" id="form" name="form" >
+        {% csrf_token %}
+       
+        <div class="mc_choice_div-group" id="Q_section">
+            <label for="test_type" style="margin-top: 1rem;">Test Type:</label>
+            <select name="test_type" id="test_type" class="mc_choice_div-control">
+                <option value="pre_test">Pre-test</option>
+                <option value="post_test">Post test</option>
+            </select>
+           
+            <label for="question">Question:</label>
+            <input id="question" name="question" type="text" placeholder="Enter your question here..." required>
+            <div class="error-message" id="question-error">Please enter a question</div>
+            
+            <label for="test_type" style="margin-top: 1rem;">Question Type:</label>
+            <select name="q_type" id="q_type" class="mc_choice_div-control" required>
+                <option value="" disabled selected>Select question type</option>
+                <option value="FB">Fill The Blanks</option>
+                <option value="MC">Multiple Choice</option>
+             
+            </select>
+            <div class="error-message" id="type-error">Please select a question type</div>
+        </div>
+
+        <!-- Fill in the blanks section -->
+        <div class="mc_choice_div-group" id="FB_SECTION" style="display: none;">
+            <label for="FB">Correct Answer:</label>
+            <input type="text" id="FB" name="FB" placeholder="Enter the correct answer...">
+            <div class="error-message" id="fb-error">Please provide the correct answer</div>
+        </div>
+
+        <!-- Multiple Choices -->
+        <div class="mc_choice_div-group" id="MC_SECTION" style="display: none;">
+            <label for="NC">Number of Choices:</label>
+            <input id="NC" name="NC" min="2" max="5" value="2" type="number">
+            <div id="mc-choices-container"></div>
+            <div class="error-message" id="mc-error">Please complete all choice fields and select the correct answer</div>
+        </div>
+
+
+        <input type="submit" value="Add Question">
+    </form>
+</div>
+
+<!-- Pre Test -->
+<div id="pre_test" class="container">
+<h2>pre_test</h2>
+<p>jsdfaklf</p>
+
+<form action="{% url 'edit_test' id  %}" method="post" id="pre_test_container">
+    {% csrf_token %}
+
+</form>
+
+
+
+
+</div>
+
+<!-- Post Test-->
+<div id="post_test" class="container">
+
+<h2>post test</h2>
+
+<form action="{% url 'edit_test' id  %}" method="post" id="post_test_container">
+    {% csrf_token %}
+
+</form>
+
+
+
+</div>
+
+<!--Display Question -->
+    {% for question in questions %}
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                const pre_test=document.getElementById("pre_test_container");
+                const post_test=document.getElementById("post_test_container");
+
+                const div=document.createElement("div");
+                div.innerHTML=`<label><h5>Question:</h5><input type="text" value="{{ question.question }}" id="question_{{ question.id }}" name="question_{{ question.id }}" class="question">
+                    <div>
+                        <a href= "{% url 'delete_question' question.id %}">Delete</a>
+                        </div>
+                    </label>
+                    <input type="hidden" name="question_type_{{ question.id }}" value="{{ question.question_type }}">`
+                if ( "{{question.test_type }}"=== "pre_test" ){
+                    pre_test.appendChild(div);
+                }else{
+                    post_test.appendChild(div);}               
+                
+                    
+                /* Fill in the blanks display Answer */
+                if ("{{ question.question_type }}"==='FB'){
+
+                    const fb_div=document.createElement("div");
+                    fb_div.className="fb_ans_container";
+                    fb_div.innerHTML=`<label><h5>Answer:</h5>
+                    <input  type="text" value="{{ question.correct_answered }}" class="fb_answered" id="fb_ans_{{ question.id }}" name="fb_ans_{{ question.id }}">
+                    </label>`;
+                    if ( "{{question.test_type }}"=== "pre_test" ){
+                        pre_test.appendChild(fb_div);
+                    }else{
+                        post_test.appendChild(fb_div);}
+                    
+                }
+                /* Multiple Choice display Answer */
+                else if ("{{ question.question_type }}"==='MC'){
+                    const mc_div=document.createElement("div");
+                    const choices = JSON.parse(`{{ choices|escapejs }}`);
+
+                    choices.forEach(choice =>{
+                        if (choice.fields.question === parseInt('{{ question.id }}')){
+                            const mc_choice=document.createElement("div");
+                            mc_choice.innerHTML=`
+                            <p>Answer</p>
+                            
+                            <label for=option>
+                            <input type='radio' id="option_${choice.pk}" name="option_${choice.fields.question}" value="${choice.pk}" ${choice.fields.is_correct ? 'checked' : ''} >
+                            <input type='text'  id="text_option_${choice.pk}" name="text_option_${choice.pk}" value="${choice.fields.text_option}">
+                            </label>`
+                            console.log(`value of is correct ${choice.fields.is_correct}`)
+                            mc_div.appendChild(mc_choice)}
+                        });
+        
+
+                    if ( "{{question.test_type }}"=== "pre_test" ){
+                        pre_test.appendChild(mc_div);
+                    }else{
+                        post_test.appendChild(mc_div);}
+               }
+
+                })
+            </script>
+    {% endfor %}
+<div class="container"></div>
+
+
+<!-- Process adding question-->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        /* question variable */
+        const q_type = document.getElementById("q_type");
+        const number_choices = document.getElementById("NC");
+        
+        /* detect change */
+        q_type.addEventListener("change", test_type_change);
+        number_choices.addEventListener("change", create_mc_q);
+
+
+
+        /* Function Change, display and create choice elements */
+        function test_type_change() {
+            document.getElementById("FB_SECTION").style.display = "none";
+            document.getElementById("MC_SECTION").style.display = "none";
+
+            const form = document.getElementById("form");
+            const past_options = form.querySelectorAll(".MC_CHOICES");
+            past_options.forEach(past_option => {
+                past_option.remove();
+            });
+
+            if (q_type.value === "FB") {
+                document.getElementById("FB_SECTION").style.display = "block";
+            } else if (q_type.value === "MC") {
+                document.getElementById("MC_SECTION").style.display = "block";
+                create_mc_q();
+            }
+            console.log(`this is the q type${q_type}`)
+        }
+
+        function create_mc_q() {
+            const numbers = parseInt(number_choices.value) || 2;
+            const container = document.getElementById("mc-choices-container");
+            container.innerHTML = '';
+
+            for (let i = 0; i < numbers; i++) {
+                const div = document.createElement("div");
+                div.className = "MC_CHOICES";
+                div.innerHTML = `
+                    <label>
+                        <input type="radio" name="MC_correct" value="${i}" }required>
+                        <input type="text" name="MC_choice_${i}" placeholder="Enter choice ${i+1}" required>
+                    </label>`;
+                container.appendChild(div);
+            }
+        }
+
+        /*detect changes*/
+
+        const pre_test = document.getElementById("pre_test_container");
+        const post_test = document.getElementById('post_test_container');
+
+        pre_test.addEventListener("change", function(){
+            ChangeQuestion('pre_test')
+
+        })
+        post_test.addEventListener("change", function(){
+            ChangeQuestion('post_test')
+            
+        })
+
+
+        function ChangeQuestion(i){
+            if ((i === 'pre_test' && !pre_test.querySelector('.change_btn')) ||
+                (i === 'post_test' && !post_test.querySelector('.change_btn')) ){
+                change_btn=document.createElement("button");
+                change_btn.className="change_btn";
+                change_btn.textContent="Save Change";
+                change_btn.type="submit"
+
+                if (i =='pre_test'){
+                    pre_test.appendChild(change_btn)
+
+                }else{
+                    post_test.appendChild(change_btn)
+
+                }
+
+            }
+
+            
+
+
+
+        }
+
+
+
+
+        
+
+    });
+
+  
+</script>
+{% endblock %}

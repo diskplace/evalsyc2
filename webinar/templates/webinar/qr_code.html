@@ -1,0 +1,122 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+
+{% block css %} <link rel="stylesheet" href="{% static 'css/register.css' %}"> {% endblock %}
+
+{% block title %}  <title>Evaluation QR Code</title> {% endblock %}
+
+{% block body %}
+
+
+<style>
+
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #dfe6fc;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(51, 39, 241, 0.1);
+    padding: 30px;
+    margin: 40px 20px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+}
+
+h1 {
+    color: #3327f1;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.qr-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    display: inline-block;
+    border: 2px solid #dfe6fc;
+}
+
+.qr-container img {
+    width: 250px;
+    height: 250px;
+    display: block;
+    margin: 0 auto;
+}
+
+.instructions {
+    background-color: #f8f9ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 25px 0;
+    text-align: left;
+    border-left: 4px solid #3327f1;
+}
+
+.instructions h3 {
+    color: #3327f1;
+    margin-top: 0;
+}
+
+.instructions ol {
+    padding-left: 20px;
+}
+
+.instructions li {
+    margin-bottom: 8px;
+    color: #000000;
+}
+
+.footer {
+    margin-top: 30px;
+    color: #666;
+    font-size: 14px;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .qr-container img {
+        width: 200px;
+        height: 200px;
+    }
+}
+</style>
+<div class="container">
+    <h1>Event Evaluation</h1>
+    
+    <div class="instructions">
+        <h3>How to complete your evaluation:</h3>
+        <ol>
+            <li>Open your smartphone's camera or QR code scanner app</li>
+            <li>Point your camera at the QR code below</li>
+            <li>Follow the link that appears to complete the evaluation</li>
+            <li>Submit your honest feedback - we appreciate it!</li>
+        </ol>
+    </div>
+    
+    {% if qr %}
+    <div class="qr-container">
+        <img src="data:image/png;base64,{{ qr }}" alt="Evaluation QR Code">
+    </div>
+    {% endif %}
+    
+    <div class="footer">
+        Thank you for participating in our event!
+    </div>
+</div>
+{% endblock %}

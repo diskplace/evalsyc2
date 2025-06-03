@@ -1,0 +1,115 @@
+body{
+    background-color: aliceblue;
+}
+.contents {
+    flex:1;
+ 
+    padding: 2rem;
+    background-color:#e7e9fa;
+}
+/* Container holding the webinar cards */
+.webinar .card {
+    background-color: #bebfc4;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease;
+}
+
+.webinar .card:hover {
+    transform: translateY(-3px);
+}
+
+/* Image on the left */
+.webinar .card img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* Description */
+.webinar .description {
+    color: #4A5568; /* gray-700 */
+    font-size: 0.95rem;
+}
+
+/* Title */
+.webinar h5 {
+    color: #2D3748;
+    margin-bottom: 0.25rem;
+}
+
+/* Instructor */
+.webinar .text-muted {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+/* Details Button */
+.webinar .btn-outline-primary {
+    border-color: #5A67D8;
+    color: #5A67D8;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    padding: 4px 12px;
+    transition: all 0.2s ease-in-out;
+}
+
+.webinar .btn-outline-primary:hover {
+    background-color: #5A67D8;
+    color: #fff;
+}
+
+/* Create Seminar Button */
+.create-event {
+    text-align: left;
+    background-color: #5A67D8;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 16px 0;
+    display: inline-block;
+    transition: background 0.2s ease;
+    
+}
+.create-event a{
+    color: #ffffff;
+}
+.create-event:hover {
+    background-color: #434190;
+}
+
+.p-3{
+    background-color: #e2e5fc;
+}
+
+
+/* Fix the card layout on small screens */
+@media (max-width: 768px) {
+    .webinar .row {
+        flex-direction: column;
+    }
+
+    .webinar .col-12 {
+        margin-bottom: 1rem;
+    }
+}
+
+
+
+
+.webinar-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.webinar-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+

@@ -1,0 +1,140 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+
+{% block title %}<title>Certificate</title>{% endblock %}
+
+{% block css %} 
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/admin_bar.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/Certificate.css' %}">
+
+{% endblock %}
+
+{% block body%}
+
+
+<div class="topbar d-flex justify-content-end align-items-center px-4 py-3">
+  <div class="topbar-right d-flex align-items-center gap-3">
+      <a href="#" class="notification-icon position-relative">
+          <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
+      </a>
+      <span class="username fw-semibold">Michael Yumul</span>
+      <a class="profile">
+          <img src="{% static 'asset/2.jpg' %}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+      </a>
+  </div>
+</div>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="{% static 'asset/logo1.png' %}" alt="Logo" />
+      <h2>SDO Baliwag</h2>
+    </div>
+    <nav class="nav">
+        <a href="{% url 'events' %}" class="nav-item">Event</a>
+        <a href="{% url 'admin_calendar' %}" class="nav-item">Calendar</a>
+        <a href="{% url 'certificate_list' %}" class="nav-item active">Certificate</a>
+        <a href="{% url 'users' %}" class="nav-item">Users</a>
+        <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
+    </nav>
+    <div class="logout" >
+      <a href="{% url 'logout' %}">
+        <img   src="{% static 'icons/exit.png' %}" alt="">
+        Logout
+      </a> 
+    </div>
+  </aside>
+
+  <div class="container">
+    <div class="header">
+      <h2>Certificate Management</h2>
+      <button class="generate-btn">+ Generate New Certificate</button>
+    </div>
+
+    <div class="controls">
+      <input type="text" placeholder="Search certificates..." class="search-bar" />
+      <div class="actions">
+        <button class="filter-btn">Filter</button>
+        <button class="export-btn">Export</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active">All Certificates</button>
+      <button class="tab">Pending</button>
+      <button class="tab">Issued</button>
+      <span class="cert-count">Showing 1–10 of 156 certificates</span>
+    </div>
+
+    <div class="table">
+      <div class="table-head">
+        <div>Speaker</div>
+        <div>Event</div>
+        <div>Issue Date</div>
+        <div>Certificate ID</div>
+        <div>Status</div>
+        <div>Actions</div>
+      </div>
+
+      <div class="table-row">
+        <div class="speaker">
+          <div class="avatar"></div>
+          <div class="info">
+            <div class="name">Bronny James</div>
+            <div class="email">jamesbronny23@deped.com</div>
+          </div>
+        </div>
+        <div>Seminar</div>
+        <div>Mar 24, 2025</div>
+        <div>CERT-2025-001</div>
+        <div><span class="badge issued">Issued</span></div>
+        <div class="icons"> 🔽 🗑️</div>
+      </div>
+
+      <div class="table-row">
+        <div class="speaker">
+          <div class="avatar"></div>
+          <div class="info">
+            <div class="name">Michael Chan</div>
+            <div class="email">michaelchan123@deped.com</div>
+          </div>
+        </div>
+        <div>Workshop</div>
+        <div>Mar 25, 2025</div>
+        <div>CERT-2025-002</div>
+        <div><span class="badge pending">Pending</span></div>
+        <div class="icons"> 🔽 🗑️</div>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <span>Showing 1 to 10 of 156 results</span>
+      <div class="pages">
+        <button class="page">1</button>
+        <button class="page">2</button>
+        <button class="page">3</button>
+        <span>...</span>
+        <button class="page">16</button>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+<footer>
+  <div class="container d-flex justify-content-between flex-wrap">
+      <div>
+          <p>Empowering organizations through effective performance evaluation</p>
+      </div>
+      <div>
+          <h6>Contact Us</h6>
+          <p>Baliwag City North Central School, Lopez Jaena St.</p>
+          <p><a href="mailto:sdo@deped.com" class="text-light">sdo@deped.com</a></p>
+      </div>
+  </div>
+</footer>
+
+
+{% endblock %}
