@@ -1,0 +1,22 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+{% block css %} <link rel="stylesheet" href="{% static 'css/evaluation.css' %}"> {% endblock %}
+{% block body %}
+
+<div class='container'>
+
+    <div>{{ qr.url }}
+    
+    </div>
+
+    <img src="{{ qr.url }}" alt="" srcset="">
+
+
+</div>
+
+
+    
+
+
+{% endblock %}

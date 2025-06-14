@@ -5,17 +5,22 @@
 {% block title %}<title>Events</title>{% endblock %}
 
 {% block css %} 
-<link rel="stylesheet" href="{% static 'css/admin_panel_css/admin_bar.css' %}?v{{ timestamp }}"> 
-<link rel="stylesheet" href="{% static 'css/admin_panel_css/events.css' %}?v{{ timestamp }}">
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/admin_bar.css' %}"> 
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/events.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/transition.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 {% endblock %}
 
 {% block body%}
-<div class="topbar d-flex justify-content-end align-items-center px-4 py-3">
+
+<div class='page-transition' >
+
+    <div class="topbar d-flex justify-content-end align-items-center px-4 py-3">
     <div class="topbar-right d-flex align-items-center gap-3">
         <a href="#" class="notification-icon position-relative">
             <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
         </a>
-        <span class="username fw-semibold">Michael Yumul</span>
+        <span class="username fw-semibold">{{ user.username }}</span>
         <a class="profile">
             <img src="{% static 'asset/2.jpg' %}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
         </a>
@@ -28,10 +33,10 @@
         <h2>SDO Baliwag</h2>
       </div>
       <nav class="nav">
-          <a href="{% url 'events' %}" class="nav-item active">Event</a>
+          <a href="{% url 'admin_events' %}" class="nav-item active">Event</a>
           <a href="{% url 'admin_calendar' %}" class="nav-item">Calendar</a>
-          <a href="{% url 'certificate_list' %}" class="nav-item">Certificate</a>
-          <a href="{% url 'users' %}" class="nav-item">Users</a>
+          <a href="{% url 'admin_certificate' %}" class="nav-item">Certificate</a>
+          <a href="{% url 'admin_users' %}" class="nav-item">Users</a>
           <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
       </nav>
       <div class="logout" >
@@ -42,45 +47,40 @@
       </div>
     </aside>
     <div class=" contents">
-        <div style="flex:1;">
-            <h1>Events</h1>
+        <div style="flex:1;" class="title-container">
+            <h1>SDO Webinars and Seminar</h1>
 
 
-            <div class=" create-event btn btn-sm muted-btn">
-                <a href="{% url 'make_webinar' %}" style=" text-decoration: none;">Create Seminar</a>
-            </div>
+     
             
         </div>
 
         <div class="container-fluid webinar mt-4">
             <div class="row">
                 {% for webinar in webinars %}
-                <div class="col-12 col-md-6 mb-4">
-                    <div class="webinar-card p-3 rounded h-100">
-                        <h5 class="fw-bold">{{ webinar.title }}</h5>
-                        <div class="text-muted mb-2">{{ webinar.instructor }}</div>
-                
-                        <div class="row g-3">
-                            <div class="col-4">
-                                <img src="{{ webinar.banner.url }}" alt="works"
-                                     class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
-                            </div>
-                            <div class="col-8">
-                                <div class="description">
-                                    {{ webinar.description|truncatewords:40 }}
-                                </div>
-                                <div class="mt-2">
-                                    <a class="btn btn-sm btn-outline-primary" href="{% url 'webinar_detail' webinar.id %}">
-                                        Details
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                
+
+
+
+                <div class="webinar-card" >
+                    <div class="img-container">
+                        <img class="webinar-banner" src="{{ webinar.banner.url }}" alt="">
+                    </div>
+                    <div class="webinar-contents">
+                        <h2 class="webinar-title">{{ webinar.title }}</h2>
+                        <p>{{ webinar.description|truncatewords:16  }}</p>
+                    <div class="webinar-button"> <a class="webinar-detail"href="{% url 'webinar_detail' webinar.id %}">Details</a></div>
                     </div>
                 </div>
                 
                 {% endfor %}
+
+
+                    <div class="webinar-card add-webinar">
+                      
+                        <a href="{% url 'make_webinar' %}" class="add-webinar-link"><i class="fas fa-plus"></i></a>
+                        
+
+                    </div>
             </div>
         </div>
         
@@ -105,5 +105,24 @@
         </div>
     </div>
 </footer>
+
+</div>
+<script>
+document.querySelectorAll('a').forEach(link => {
+  const url = new URL(link.href, window.location.href);
+
+  // Make sure it’s an internal link and not # or JS
+  if (url.origin === window.location.origin && !link.href.includes('#')) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.body.classList.add('slide-out');
+      setTimeout(() => {
+        window.location.href = link.href;
+      }, 400); // Match CSS duration
+    });
+  }
+});
+</script>
+
 
 {% endblock %}

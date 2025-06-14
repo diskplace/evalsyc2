@@ -4,32 +4,27 @@
 
 {% block title %}<title>Home page</title>{% endblock %}
 
-{% block css %} <link rel="stylesheet" href="{% static 'css/index.css' %}"> {% endblock %}
+{% block css %} 
+<script src="{% static 'js/full_calendar/index.global.min.js' %}"></script>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/index.css' %}"> {% endblock %}
 
 {% block body%}
-
     <nav class="navbar">
-
-
         <ul class="nav-links">
             <li><img class="logo" src="{% static 'asset/logo1.png' %}" alt="logo"></li>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'user_dashboard' %}">Events and Announcements</a></li>
-            <li><a href="">Evaluation Guidelines</a></li>
-            <li><a href="">About us</a></li>
+            <li><a href="#header-section">Home</a></li>
+            <li><a href="#events-section">Events and Announcements</a></li>
+      
+            <li><a href="#aboutus-section">About us</a></li>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li class="log-button"><a href="{% url 'logout' %}">Logout</a></li>
 
             
-   
-
             {% else %}
-                <li><a href="{% url 'login' %}">Login</a></li>
-
+                <li class="log-button" ><a  href="{% url 'login' %}">Login</a></li>
             {% endif %}
-       
         </ul>
-
     </nav>
 
     {% if user.is_authenticated %}
@@ -37,60 +32,119 @@
     {% endif %}
 
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col overview" >
-                <h3>Transform Your Perfomance
-                    Evaluation Process
-                </h3>
-                <p>Streamline Your workflow with our comprehensive platform <br>
-                designed for modern organizations</p>
-                <button>Login Now</button>
-
-            </div>
-            <div class="col">
-                <img src="{% static 'asset/1.jpg' %}" alt="lmao" style="height: 400px; width: auto; border-radius: 10%;">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <img src="{% static 'asset/2.jpg' %}" alt="lol" style="height: 400px; width: auto; border-radius: 10%;">
-
-            </div>
-            <div class="col">
-                <h4>Upcoming Events</h4>
-                <div class="container"></div>
-                
-            </div>
-
-        </div>
-    </div>
 
     
+    <section id="header-section">
+        <img id="header-img" src="{% static 'asset/header.png' %}" alt="">
+    </section>
 
-    <div class="container webinar">
-        <div class="row">
+    <section id="organi-section">
+        <div class="overview">
+            <h2 class="title">Transfrom Your Performance </h2>
+            <h2>Evaluation Process</h2>
+            <p class="description">Streamline your evaluation workflow with out comprehensive platform</p>
+            <p>  designed for modern orgranizations.</p>
+            <div class="buttons">
+                <a href="{% url 'login' %}" class="btn">Login Now</a>
+                <a class="btn" id="learn-btn">Learn More</a>
+            </div>
+
+        </div>
+
+        <div class="img-container">
+            <img class="img" src="{% static 'asset/1.jpg' %}" alt="">
+
+        </div>
+
+    </section>
+
+    <section id="events-section" >
+        <h2> Events & Announcements</h2>
+
+        
+        <div class="events-container">
+            <h5>Upcoming Events</h5>
+
             {% for webinar in webinars %}
-            <div class="col-12 col-md-6 mb-4">
-                <div class="p-3 border rounded shadow-sm">
-                    <h5>{{ webinar.title }}</h5>
-                    <div>{{ webinar.instructor }}</div>    
-    
-                    <div class="d-flex gap-3 align-items-start">
-                        <img src="{{ webinar.banner.url }}" alt="works" style="height: 200px; width: auto;" class="img-fluid">
-                        <div style="flex: 1;" class="description">{{ webinar.description }}</div>
-
-                    </div>
-                    <div class="webinar_detail" style="flex: 1;">
-                        <a href="{% url 'webinar_detail' webinar.id %}">Details</a>
-                    </div>
-    
+                <div class="events">
+                    <p class="date">{{ webinar.start_date }}</p>
+                    <h6> {{ webinar.title }} </h6>
 
                 </div>
-            </div>
             {% endfor %}
-        </div>
-    </div>
-    
+            
 
+    </section>
+
+ <h2 id="aboutus-title">About us</h2>
+    <section id="aboutus-section">
+        
+        <p class="description aboutus-des">The Schools Division Office of Baliwag is dedicated to promoting excellence through efficient event management and evaluation. This platform streamlines attendance tracking, collects valuable participant feedback, and ensures seamless certificate generation. Committed to continuous improvement, we strive to enhance transparency and support professional growth within our education community.</p>
+
+        <div class="image-container">
+            <img class="img" src="{% static 'asset/2.jpg' %}" alt="">
+
+        </div>
+       
+    </section>
+
+<footer class="footer">
+  <div class="footer-container">
+    
+    <!-- Left: Logo and Name -->
+    <div class="footer-left">
+        <img  class="logo" src="{% static 'asset/logo1.png' %}" alt="">
+    
+      <p>School Division Office Of The City Of BALIWAG</p>
+    </div>
+
+    <!-- Center: Quick Links -->
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <div class="link-columns">
+        <ul>
+          <li><a href="#header-section">Home</a></li>
+          <li><a href="#events-section">Events</a></li>
+       
+          <li><a href="#aboutus-section">About Us</a></li>
+        </ul>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right: Contact Info -->
+    <div class="footer-contact">
+      <h4>Contact Us</h4>
+      <p> Baliwag City North Central School,<br> Lopez Jaena St, Baliwag, Bulacan</p>
+      <p> +63912376421</p>
+      <p> sdo@deped.com</p>
+    </div>
+
+  </div>
+</footer>
+
+
+
+
+
+
+    <div class="container webinar">
+        <!-- Your webinar content remains the same -->
+    </div>
+
+    <script>
+          document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      height: 300,
+      width:300,
+      events: "{% url 'events_data' %}"
+    });
+    calendar.render();
+  });
+    </script>
 {% endblock %}

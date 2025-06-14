@@ -17,8 +17,6 @@ class Webinar(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.venue}"
-    
-
 
 class Speaker(models.Model):
     webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE)
@@ -35,13 +33,13 @@ class WebinarAttendees(models.Model):
 class ResponseQuestionaire(models.Model):
       webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE)
       user=models.ForeignKey(User, on_delete=models.CASCADE)
+      type=models.CharField(max_length=100, null=True, blank=True)
       q1=models.IntegerField(null=True)
       q2=models.IntegerField(null=True)
       q3=models.IntegerField(null=True)
       q4=models.IntegerField(null=True)
       q5=models.IntegerField(null=True)
       q6=models.IntegerField(null=True)
-
 
 
 class Test_Question(models.Model):

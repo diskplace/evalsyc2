@@ -4,6 +4,7 @@ from django.db.models import Avg,F
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core import serializers
+from django.http import JsonResponse
 import qrcode
 import re
 # Create your views here.
@@ -45,6 +46,18 @@ def webinar_detail(request, id):
     return render(request, "webinar/webinar_detail.html",{
         'webinar':webinar
     })
+
+def events_data(request):
+    events = []
+
+    for webinar in Webinar.objects.all():
+        events.append({
+            'title': webinar.title,
+            'start': webinar.start_date.isoformat(),  
+            'end': webinar.until_date.isoformat() ,
+        })
+
+    return JsonResponse(events, safe=False)
 
 
 def register(request, id):
@@ -105,18 +118,43 @@ def validation(request, id):
 
 #questionaire
 def questionaire(request, id):
-    user=request.user
     webinar=get_object_or_404(Webinar, id=id)
+
+    speaker=[]
+    venue=[]
+    meals=[]
+    manage=[]
+    all_responses = {
+    "speaker": speaker,
+    "venue": venue,
+    "meals": meals,
+    "manage": manage}
+
     if request.method=='POST':
-        q1=request.POST.get('q1')
-        q2=request.POST.get('q2')
-        q3=request.POST.get('q3')
-        q4=request.POST.get('q4')
-        q5=request.POST.get('q5')
-        q6=request.POST.get('q6')
-        reponse=ResponseQuestionaire(webinar=webinar, user=user,q1=q1,
-            q2=q2,q3=q3,q4=q4,q5=q5,q6=q6)
-        reponse.save()
+
+        for key, value in request.POST.items():
+
+            if key.startwith('speaker'):
+                speaker.append(value)
+            elif key.startwith('venue'):
+                venue.append(value)
+            elif key.startwith('meals'):
+                meals.append(value)
+            elif key.startwith("manage"):
+                manage.append(value)
+            
+        for catergory , reponses in all_responses:
+            ResponseQuestionaire.objects.create(
+                webinar=webinar,
+                user=request.user,
+                type=catergory,
+                q1=reponses[0],
+                q2=reponses[1],
+                q3=reponses[2],
+                q4=reponses[3],
+                q5=reponses[4],
+
+            )
         return redirect(webinar_detail, webinar.id)
     if webinar.event_type == 'recognition':
         return render(request,'webinar/evaluation/recognition.html',{
@@ -128,31 +166,10 @@ def questionaire(request, id):
         'webinar':webinar
     })
 
-
     return render(request,'webinar/evaluation/workshop.html',{
         'webinar':webinar
     })
 
-
-def average_result(request, id):
-    webinar=get_object_or_404(Webinar, id=id)
-    average=ResponseQuestionaire.objects.filter(webinar=webinar).aggregate(
-        q1=Avg('q1'),
-        q2=Avg('q2'),
-        q3=Avg('q3'),
-        q4=Avg('q4'),
-        q5=Avg('q5'),
-        q6=Avg('q6'),)
-    
-    total=sum(average.values())/6
-
-    return render(request, 'webinar/result.html',{
-        'webinar':webinar,
-        'average':average,
-        'total':total
-
-
-    })
 
 
 def create_test(request, id):
@@ -221,7 +238,6 @@ def redirect_create_test(request, id):
         
     })
 
-
 def edit_test(request, id):
     webinar=get_object_or_404(Webinar, id=id)
     if request.method== 'POST':
@@ -232,7 +248,6 @@ def edit_test(request, id):
                 search_id=re.findall(r"\d+", edit_question)[0]
                 question_text=request.POST.get(f"question_{search_id}")
         
-
                 test=Test_Question.objects.get(id=search_id)
                 q_type=request.POST.get(f"question_type_{search_id}")
                 print(f"question type: {q_type}")
@@ -258,6 +273,8 @@ def edit_test(request, id):
                 text_option = request.POST.get(f'text_option_{choice_id}', '')
 
                 try:
+
+                    
                     option = Choice.objects.get(id=choice_id)
                     question_id = option.question.id  
 
@@ -274,13 +291,13 @@ def edit_test(request, id):
 
     return redirect(redirect_create_test, id=id)
 
+
 def delete_question(request, id):
     print(f"this is the delete id {id}")
     test=Test_Question.objects.get(id=id)
      
     test.delete()
     return redirect(redirect_create_test, id=test.webinar.id)
-
 
 def display_test(request, id, type):
     webinar=Webinar.objects.get(id=id)
@@ -309,8 +326,7 @@ def record_test(request, id, type):
                 try:
                     question=Test_Question.objects.get(id=q_id)
                     
-     
-                            
+        
                     if question.correct_answered==output_value:
                         correct=True
                     else:
@@ -331,4 +347,3 @@ def record_test(request, id, type):
                             question=mc_option.question,
                             user_input=output_value,
                             is_correct=correct)
-                        

@@ -14,10 +14,11 @@
                 <img class="logo" src="{% static 'asset/logo1.png' %}" alt="logo"> 
                 <span>SDO Baliwag</span>
             </li>
-            <li><a href="{% url 'index' %}">Events</a></li>
-            <li><a href="#">Calendar</a></li>
-            <li><a href="#">Certificate</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="{% url 'admin_panel' %}">Events</a></li>
+            <li><a href="{% url 'admin_calendar' %}">Calendar</a></li>
+            <li><a href="{% url 'admin_certificate' %}">Certificate</a></li>
+            <li><a href="{% url 'admin_setting' %}">Settings</a></li>
+            <li><a href="{% url 'admin_users' %}">Users</a></li>
 
             {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}">Logout</a></li>

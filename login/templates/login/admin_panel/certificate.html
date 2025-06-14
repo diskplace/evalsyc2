@@ -18,7 +18,7 @@
       <a href="#" class="notification-icon position-relative">
           <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
       </a>
-      <span class="username fw-semibold">Michael Yumul</span>
+      <span class="username fw-semibold">{{ user.username }}</span>
       <a class="profile">
           <img src="{% static 'asset/2.jpg' %}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
       </a>
@@ -31,10 +31,10 @@
       <h2>SDO Baliwag</h2>
     </div>
     <nav class="nav">
-        <a href="{% url 'events' %}" class="nav-item">Event</a>
+        <a href="{% url 'admin_events' %}" class="nav-item">Event</a>
         <a href="{% url 'admin_calendar' %}" class="nav-item">Calendar</a>
-        <a href="{% url 'certificate_list' %}" class="nav-item active">Certificate</a>
-        <a href="{% url 'users' %}" class="nav-item">Users</a>
+        <a href="{% url 'admin_certificate' %}" class="nav-item active">Certificate</a>
+        <a href="{% url 'admin_users' %}" class="nav-item">Users</a>
         <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
     </nav>
     <div class="logout" >

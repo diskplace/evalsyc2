@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Editor</title>
+    <link rel="stylesheet" href="{% static 'css/exam_portal/createCertificate.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Certificate Editor</h1>
+        </div>
+
+        
+        
+        <div class="sidebar-section">
+            <h2>Upload Certificate Template</h2>
+            <p id="changes" style="color:rgb(18, 165, 18); font-weight: 500; display: none;" >
+
+            </p> 
+ 
+            <form action="{% url 'upload_img' webinar.id %}" method="post" enctype="multipart/form-data" class="upload-form">
+                {% csrf_token %}
+                <div class="file-upload">
+                    <label for="img" class="file-upload-label">
+                        <span class="file-upload-icon"></span>
+                        <span class="file-upload-text" id="fileName">Choose a file</span>
+                    </label>
+                    <input id="img" name="img" type="file" class="file-upload-input">
+                </div>
+
+                <input type="submit" value="Upload" class="btn btn-upload">
+            </form>
+        </div>
+
+        <div class="sidebar-section">
+            <h2>Edit Content</h2>
+            <form {% if img %} action="{% url 'upload_contents' img.id %}" {% endif %} method="post" id="form-content" class="edit-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="certificate-title">Title:</label>
+                    <input type="text" id="certificate-title" name="certificate-title" value="{{ img.title }}" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="certificate-subtitle">Subtitle:</label>
+                    <input type="text" id="certificate-subtitle" name="certificate-subtitle" value="{{ img.subtitle }}" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="certificate-name">Participants:</label>
+                    <input type="text" id="certificate-name"  name="certificate-name" value="{{ img.participant }}"  class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="certificate-host">Host:</label>
+                    <input type="text" id="certificate-host" name="certificate-host" value="{{ img.host }}" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="certificate-subject">Subject:</label>
+                    <textarea name="certificate-subject" id="certificate-subject"  class="form-textarea">{% if  img.subject  %}{{ img.subject }}{% endif %}
+                    </textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="certificate-address">Address:</label>
+                    <textarea name="certificate-address" id="certificate-address" class="form-textarea">{% if  img.address  %}{{ img.address }}{% endif %}
+                    </textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="certificate-date">Date:</label>
+                    <textarea name="certificate-date" id="certificate-date"  class="form-textarea">{% if  img.date  %}{{img.date}}{% endif %}
+                    </textarea>
+                </div>
+                
+                <input type="submit" value="Apply Changes" id="apply-btn" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+
+    <div id="canvas-container"  class="canvas-container main-content">
+        <div class="canvas-wrapper">
+            <canvas id="canvas" name="canvas"></canvas>
+        </div>
+
+        <div><button onclick="downloadPDF()" class="btn btn-download">Download Template </button></div>
+
+        
+    </div>
+
+    <div id="data-box"
+     data-img="{% if img %}true{% else %}false{% endif %}"
+     data-msg="{% if messages %}true{% else %}false{% endif %}">
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+    <script>
+ 
+
+
+    </script>
+
+
+
+    <script>
+        
+        const canvas=document.getElementById('canvas');
+        const ctx=canvas.getContext('2d');
+        const apply=document.getElementById("apply-btn");
+        
+
+
+        window.onload = function () {
+
+            const box = document.getElementById("data-box");
+            if (box.dataset.img === "true"){
+                drawIMG();
+
+            } 
+            if (box.dataset.msg === "true"){
+                applyChanges()
+            };
+
+            const fileName = document.getElementById("fileName");
+            const uploadImg = document.getElementById("img");
+
+            uploadImg.addEventListener("change", function () {
+                if (uploadImg.files.length > 0) {
+                    fileName.textContent = uploadImg.files[0].name;
+                } else {
+                    fileName.textContent = "Choose a file";
+                }
+            });
+
+
+  
+        }
+
+
+        const content= document.getElementById("form-content");
+        content.addEventListener("change", function (event){
+            drawTxt();
+        });
+
+        let saveState;
+
+        function drawIMG(){
+            const img = new Image();
+            
+            img.src = "{{ img.img.url }}";
+            img.onload = () => {
+                const scaleFactor = 2;
+                 
+
+                const displayWidth = img.width > 900 ? img.width / 2 : img.width;
+                const displayHeight = img.height > 900 ? img.height / 2 : img.height;
+
+                canvas.width = displayWidth * scaleFactor;
+                canvas.height = displayHeight * scaleFactor;
+
+                canvas.style.width = `${displayWidth}px`;
+                canvas.style.height = `${displayHeight}px`;
+
+                ctx.scale(scaleFactor, scaleFactor); 
+
+                ctx.drawImage(img, 0, 0, displayWidth, displayHeight);
+                saveState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                drawTxt();
+            };
+        }
+
+     
+        function drawTxt() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!saveState) return;
+            ctx.putImageData(saveState, 0, 0);
+
+            const title = document.getElementById("certificate-title").value;
+            const subtitle = document.getElementById("certificate-subtitle").value;
+            const name = document.getElementById("certificate-name").value;
+            const host = document.getElementById("certificate-host").value;
+
+            ctx.textAlign = "center";
+            ctx.fillStyle = "black";
+
+            const x = canvas.width/2/2 ;
+            let y = 240; 
+            const spacing = 40;
+            const littespace=20;
+            const bigspace=50
+
+            ctx.font = "50px Old English Text MT";
+            ctx.fillText(title, x, y);
+             y += spacing;
+
+            ctx.font = "14px 'Bookman Old Style'";
+            ctx.fillText(subtitle, x, y); y +=spacing;
+
+            ctx.font = "Bold 29px 'Bookman Old Style'";
+            ctx.fillText(name, x, y); y += littespace;
+
+            ctx.font = "15px 'Bookman Old Style'";
+            ctx.fillText(host, x, y); y += littespace;
+
+            drawAllParagraphs(650,y);
+            flip();
+        }
+
+        function drawAllParagraphs(maxWidth, y) {
+            const subject = document.getElementById("certificate-subject").value;
+            const address = document.getElementById("certificate-address").value;
+            const date = document.getElementById("certificate-date").value;
+
+            ctx.textAlign = "center";
+            ctx.fillStyle = "black";
+            ctx.font = " 16px 'Bookman Old Style'";
+            y+=10
+            const x = canvas.width / 2/2;
+            const lineHeight = 25;
+
+            function drawParagraphBlock(paragraph , font) {
+                const words = paragraph.split(" ");
+                let line = "";
+                for (let i = 0; i < words.length; i++) {
+                    const testLine = line + words[i] + " ";
+                    if (ctx.measureText(testLine).width > maxWidth && i > 0) {
+                        ctx.font=`${font} 16px 'Bookman Old Style'`
+                        ctx.fillText(line, x, y);
+                        line = words[i] + " ";
+                        y += lineHeight;
+                    } else {
+                        line = testLine;
+                    }
+                }
+                ctx.fillText(line, x, y);
+                y += lineHeight; 
+            }
+
+            drawParagraphBlock(subject, "");
+            drawParagraphBlock(address, "italic");
+            drawParagraphBlock(date, 'italic');
+        }
+    
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+
+            const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
+
+            const pdf = new jsPDF({
+                orientation: orientation,
+                unit: 'px',
+                format: [canvas.width, canvas.height]
+            });
+
+            pdf.addImage(dataUrl, 'JPEG', 0, 0, canvas.width, canvas.height);
+            pdf.save("certificate.pdf");
+        }
+
+      
+        function flip(){
+            const canvas_container=document.getElementById("canvas-container")
+            canvas_container.style.animation=" flip .6s ease";
+
+    
+  
+        }
+
+        function applyChanges(){
+            const message=document.getElementById("changes")
+            message.innerHTML="{{ messages }}"
+            message.style.display="block";
+
+            setTimeout(()=>{
+                message.style.display="none";
+
+            },2000)
+        }
+
+    </script>
+</body>
+</html>

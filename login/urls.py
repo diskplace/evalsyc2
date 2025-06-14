@@ -6,8 +6,29 @@ urlpatterns=[
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("verification", views.generate_otp, name="otp"),
-    path("admin_panel", views.admin_panel, name="admin_panel"),
-    path("user_dashboard", views.user_dashboard, name="user_dashboard")
+  
+
+    path("admin_calendar",views.admin_calendar, name="admin_calendar"),
+    path("admin_certificate",views.admin_certificate, name="admin_certificate"),
+    path("admin_events",views.admin_events, name="admin_events"),
+    path("admin_setting",views.admin_setting, name="admin_setting"),
+    path("admin_users",views.admin_users, name="admin_users"),
+    path("admin_events",views.admin_events, name="admin_events"),
+
+
+    path("user_dashboard", views.user_dashboard, name="user_dashboard"),
+    path("calendar", views.calendar, name="calendar"),
+    path("evaluation_nav", views.evaluation_nav, name="evaluation_nav"),
+    path("attendance", views.attendance, name="attendance"),
+    path("certificate", views.certificate, name="certificate"),
+    path("aboutus", views.aboutus, name="aboutus"),
+
+    path("register_user", views.register_user, name="register_user"),
+    path("create_admin", views.create_admin, name="create_admin"),
+    path('delete_user/<int:id>/', views.delete_user, name="delete_user")
+
+
+    
 
     
 ]
