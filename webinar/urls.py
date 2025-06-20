@@ -14,6 +14,6 @@ urlpatterns=[
     path("edit_test/<int:id>/", views.edit_test, name="edit_test"),
     path("delete_test/<int:id>/", views.delete_question, name="delete_question"),
 
-    path("display_test/<int:id>/<str:type>", views.display_test, name="display_test"),
-    path("eventsdata", views.events_data, name="events_data")
+    path("eventsdata", views.events_data, name="events_data"),
+    path("user_event_date", views.user_events_data, name="user_events_data")
 ]

@@ -22,10 +22,17 @@ urlpatterns=[
     path("attendance", views.attendance, name="attendance"),
     path("certificate", views.certificate, name="certificate"),
     path("aboutus", views.aboutus, name="aboutus"),
+    path("user_setting", views.user_setting, name="user_setting"),
 
     path("register_user", views.register_user, name="register_user"),
     path("create_admin", views.create_admin, name="create_admin"),
-    path('delete_user/<int:id>/', views.delete_user, name="delete_user")
+    path('delete_user/<int:id>/', views.delete_user, name="delete_user"),
+
+    path("generete_authorization_key", views.generete_authorization_key, name="generete_authorization_key"),
+    path("edit_user", views.edit_user, name="edit_user"),
+
+    path("Change_password", views.change_password, name="change_password"),
+
 
 
     

@@ -7,11 +7,12 @@ class Webinar(models.Model):
 
     title=models.CharField(max_length=20)
     description=models.CharField(max_length=1000)
+ 
     number_of_speaker=models.IntegerField(default=1)
     event_type=models.CharField(max_length=20, null=True ,blank=True)
     start_date=models.DateField(null=True ,blank=True)
     until_date=models.DateField(null=True, blank=True)
-    time=models.CharField(max_length=20)
+    time=models.TimeField(max_length=20)
     banner=models.ImageField(upload_to='banner')
     venue=models.CharField(max_length=40)
 
@@ -19,13 +20,15 @@ class Webinar(models.Model):
         return f"{self.title} - {self.venue}"
 
 class Speaker(models.Model):
-    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE)
-    speaker_name=models.CharField(max_length=30)
-    speaker_email=models.EmailField(max_length=30, null=True)
+    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, related_name="speaker")
+    img=models.ImageField(upload_to="SpeakerProfile",blank=True,default='UserProfile/1.jpg', null=True)
+    name=models.CharField(max_length=30)
+    email=models.EmailField(max_length=30, null=True)
 
 
 class WebinarAttendees(models.Model):
-    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE)
+    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, related_name="attendess")
+    user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="attendees", null=True, blank=True)
     school_id=models.CharField(max_length=20, null=True)
     email=models.EmailField()
 

@@ -57,13 +57,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+from . import file
+
 #email_set_up
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'johnphilipbaylon17@gmail.com'  
-EMAIL_HOST_PASSWORD = 'vseu zfix wrtg nfhe'  
+EMAIL_BACKEND = file.EMAIL_BACKEND
+EMAIL_HOST = file.EMAIL_HOST
+EMAIL_PORT = file.EMAIL_PORT
+EMAIL_USE_TLS = file.EMAIL_USE_TLS
+EMAIL_HOST_USER = file.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = file.EMAIL_HOST_PASSWORD 
+
+ADMIN_EMAIL= file.ADMIN_EMAIL
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,7 +145,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

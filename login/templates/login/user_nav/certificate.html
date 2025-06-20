@@ -1,105 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Evaluate Now</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css"/>
-</head>
-<body>
-  <div class="container">
-  
+{% extends "login/layout.html" %}
+
+{% load static %}
+{% block css %} 
+<link rel="stylesheet" href="{% static 'css/user_nav/certificate.css' %}"> 
+<link rel="stylesheet" href="{% static 'css/bar.css' %}"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+{% endblock %}
+
+{% block title %}<title>User Dashboard</title>{% endblock %}
+
+{% block body %}
+  <div class="topbar d-flex justify-content-end align-items-center px-4 py-3">
+    <div class="topbar-right d-flex align-items-center gap-3">
+        <a href="#" class="notification-icon position-relative">
+            <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
+        </a>
+        <span class="username fw-semibold">{{ user.username }}</span>
+        <a class="profile">
+            <img src="{% static 'asset/2.jpg' %}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+        </a>
+    </div>
+  </div>
+  <div class="app-container">
     <aside class="sidebar">
-      <div class="logo">SDO Baliwag</div>
-      <nav>
-        <a href="{% url 'user_dashboard' %}">Dashboard</a>
-        <a href="{% url 'calendar' %}">Calendar</a>
-        <a href="{% url 'evaluation_nav' %}" class="active">Evaluate</a>
-        <a href="{% url 'attendance' %}">Attendance</a>
-        <a href="{% url 'certificate' %}">Certificate</a>
-        <a href="{% url 'aboutus' %}">About Us</a>
+      <div class="logo">
+        <img src="{% static 'asset/logo1.png' %}" alt="Logo" />
+        <h2>SDO Baliwag</h2>
+      </div>
+      <nav class="nav">
+          <a href="{% url 'user_dashboard' %}" class="nav-item active">Dashboard</a>
+          <a href="{% url 'calendar' %}" class="nav-item ">Upcoming Events</a>
+          <a href="{% url 'certificate' %}" class="nav-item">Certificate</a>
+          <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
       </nav>
-      <a href="#" class="logout">Log Out</a>
+      <div class="logout" >
+        <a href="{% url 'logout' %}">
+          <img   src="{% static 'icons/exit.png' %}" alt="">
+          Logout
+        </a> 
+      </div>
     </aside>
 
+    <div class="main-content" >
+      <section class="certificate-section">
+        <h2>Certificate</h2>
+        <p>Acquired Certificate</p>
 
-    <main class="main-content">
+        <div class="certificate-container">
+            {% if  upcoming_webinars %}
+            
+            {% for up_webinar in upcoming_webinars   %}
+              <div class="webinar-card">
+                <img class="webinar-banner" src="{{ up_webinar.webinar.banner.url }}" alt="">
+                <div class="webinar-contents" >
+                  <h4> {{ up_webinar.webinar.title }}</h4>
+                 
+                  <p class="webinar-time"><i class="fa-solid fa-clock"></i> {{ up_webinar.webinar.time|time:"h:i A" }}</p>
+                  <p style="color:rgb(89, 187, 89); font-weight: 600; ">Upcoming</p>
+                  
+                  <p class="webinar-descrtiption" >{{ up_webinar.webinar.description|truncatewords:16  }}</p>
+                  <div class="webinar-btn-container"> 
+                  <button class="webinar-btn"> Views details </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
 
-      <header class="header">
-        <h1>Evaluate!</h1>
-        <div class="user-info">
-          <span class="dot"></span>
-          <span class="username">Michael Yumul</span>
+          {% else %}
+            <div class="messages-container">
+              <h2> {{ upcoming_message }} </h2>
+            </div>
+
+          {% endif %}
+
+
         </div>
-      </header>
 
-
-      <section class="content">
-        <div class="card">
-          <h2>Evaluate now</h2>
-          <div class="tab-header">
-            <span class="tab-title">Pending Evaluations</span>
-            <span class="info-icon">ℹ️</span>
-          </div>
-
-          <div class="evaluation-list">
-            <div class="evaluation">
-              <div>
-                <div class="event-title">Teachers’ Professional Development & Training</div>
-                <div class="event-subtitle">SGOD Chief: Irene L. Elizalde</div>
-              </div>
-              <div class="event-footer">
-                <span>Due April 1, 2025</span>
-                <span class="badge pending">Pending</span>
-              </div>
-            </div>
-
-            <div class="evaluation">
-              <div>
-                <div class="event-title">Student Welfare & Inclusive Education Forum Seminar</div>
-                <div class="event-subtitle">SGOD Chief: Irene L. Elizalde</div>
-              </div>
-              <div class="event-footer">
-                <span>Due Apr 2, 2025</span>
-                <span class="badge pending">Pending</span>
-              </div>
-            </div>
-
-            <div class="evaluation">
-              <div>
-                <div class="event-title">Student Welfare & Inclusive Education Forum Training</div>
-                <div class="event-subtitle">SGOD Chief: Irene L. Elizalde</div>
-              </div>
-              <div class="event-footer">
-                <span>Due Apr 2, 2025</span>
-                <span class="badge pending">Pending</span>
-              </div>
-            </div>
-
-            <div class="evaluation">
-              <div>
-                <div class="event-title">Student Welfare & Inclusive Education Forum Workshop</div>
-                <div class="event-subtitle">SGOD Chief: Irene L. Elizalde</div>
-              </div>
-              <div class="event-footer">
-                <span>Due Apr 2, 2025</span>
-                <span class="badge pending">Pending</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="pagination">
-            <span>Showing 1 to 2 entries</span>
-            <div class="page-controls">
-              <button class="active">1</button>
-              <button>2</button>
-              <button>⋮</button>
-            </div>
-          </div>
-        </div>
       </section>
-    </main>
-  </div>
-</body>
-</html>
+
+
+
+<footer>
+    <div class="container d-flex justify-content-between flex-wrap">
+        <div>
+            <p>Empowering organizations through effective performance evaluation</p>
+        </div>
+        <div>
+            <h6>Contact Us</h6>
+            <p>Baliwag City North Central School, Lopez Jaena St.</p>
+            <p><a href="mailto:sdo@deped.com" class="text-light">sdo@deped.com</a></p>
+        </div>
+    </div>
+</footer>
+
+
+
+
+{% endblock %}

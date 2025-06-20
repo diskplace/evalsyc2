@@ -1,0 +1,161 @@
+{% extends "login/layout.html" %}
+
+{% load static %}
+{% block css %} 
+<link rel="stylesheet" href="{% static 'css/user_nav/user_dashboard.css' %}"> 
+<link rel="stylesheet" href="{% static 'css/bar.css' %}"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+{% endblock %}
+
+{% block title %}<title>User Dashboard</title>{% endblock %}
+
+{% block body %}
+  <div class="topbar d-flex justify-content-end align-items-center px-4 py-3">
+    <div class="topbar-right d-flex align-items-center gap-3">
+        <a href="#" class="notification-icon position-relative">
+            <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
+        </a>
+        <span class="username fw-semibold">{{ user.username }}</span>
+        <a class="profile">
+            <img src="{{ user.user_profile.img.url }}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+        </a>
+    </div>
+  </div>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="{% static 'asset/logo1.png' %}" alt="Logo" />
+        <h2>SDO Baliwag</h2>
+      </div>
+      <nav class="nav">
+          <a href="{% url 'user_dashboard' %}" class="nav-item active">Dashboard</a>
+          <a href="{% url 'calendar' %}" class="nav-item ">Upcoming Events</a>
+          <a href="{% url 'certificate' %}" class="nav-item">Certificate</a>
+          <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
+      </nav>
+      <div class="logout" >
+        <a href="{% url 'logout' %}">
+          <img   src="{% static 'icons/exit.png' %}" alt="">
+          Logout
+        </a> 
+      </div>
+    </aside>
+
+    <div class="main-content" >
+      <section class="title-container">
+        <h2>Dashboard</h2>
+        <p>Views Events and details</p>
+
+      </section>
+      <section class="total-section">
+        <div class="cert-container">
+            <div class="total-card">
+                <div class="total">5</div>
+                <h2>Certificate</h2>
+
+            </div>
+        </div>
+        <div class="atten-container">
+
+            <div class="total-card">
+              <div class="total">5</div>
+              <h2> Attendance</h2>
+            </div>
+        </div>
+    </section>
+    <section class="events-section">
+        <h2>Your Events</h2>
+        <div class="events-container" >
+          {% if  upcoming_webinars %}
+            
+            {% for up_webinar in upcoming_webinars   %}
+              <div class="webinar-card">
+                <img class="webinar-banner" src="{{ up_webinar.webinar.banner.url }}" alt="">
+                <div class="webinar-contents" >
+                  <h4> {{ up_webinar.webinar.title }}</h4>
+                 
+                  <p class="webinar-time"><i class="fa-solid fa-clock"></i> {{ up_webinar.webinar.time|time:"h:i A" }}</p>
+                  <p style="color:rgb(89, 187, 89); font-weight: 600; ">Upcoming</p>
+                  
+                  <p class="webinar-descrtiption" >{{ up_webinar.webinar.description|truncatewords:16  }}</p>
+                  <div class="webinar-btn-container"> 
+                  <button class="webinar-btn"> Views details </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+          {% else %}
+            <div class="messages-container">
+              <h2> {{ upcoming_message }} </h2>
+            </div>
+
+          {% endif %}
+
+
+
+            
+            
+        </div>
+    </section>
+    <section class="history-section">
+      <h2>Past Events</h2>
+
+      <div class="past-container">
+          {% if  past_webinars %}
+            
+            {% for pt_webinar in past_webinars   %}
+              <div class="webinar-card">
+                <img class="webinar-banner" src="{{ pt_webinar.webinar.banner.url }}" alt="">
+                <div class="webinar-contents" >
+                  <h4> {{ pt_webinar.webinar.title }}</h4>
+                 
+                  <p class="webinar-time"><i class="fa-solid fa-clock"></i> {{ pt_webinar.webinar.time|time:"h:i A" }}</p>
+                  <p style="color:rgb(179, 38, 33); font-weight: 600; ">Competed</p>
+                  
+                  <p class="webinar-descrtiption" >{{ pt_webinar.webinar.description|truncatewords:16  }}</p>
+                  <div class="webinar-btn-container"> 
+                  <button class="webinar-btn"> Views details </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+          {% else %}
+            <div class="messages-container">
+              <h2> {{ past_message }} </h2>
+            </div>
+
+          {% endif %}
+
+
+      </div>
+
+
+
+    </section>
+    </div>
+
+</div>
+</div>
+    
+
+
+<footer>
+    <div class="container d-flex justify-content-between flex-wrap">
+        <div>
+            <p>Empowering organizations through effective performance evaluation</p>
+        </div>
+        <div>
+            <h6>Contact Us</h6>
+            <p>Baliwag City North Central School, Lopez Jaena St.</p>
+            <p><a href="mailto:sdo@deped.com" class="text-light">sdo@deped.com</a></p>
+        </div>
+    </div>
+</footer>
+
+
+
+
+{% endblock %}

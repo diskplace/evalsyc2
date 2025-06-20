@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from webinar.models import Test_Question, TestResponse, ResponseQuestionaire,Webinar
+from webinar.models import Test_Question, TestResponse, ResponseQuestionaire,Webinar,WebinarAttendees
 from .models import TestResult,TestQR, CertificateTemplate
 from django.shortcuts import redirect
 
@@ -60,47 +60,66 @@ def display_result(request, id):
         'result':result
     })
 
-def generate_qr(request, id):
-    url='http://127.0.0.1:8000'
-    try: 
-        TestQR.objects.get(test_id=id)
-        #print qr already exist
+def generate_qr(request, id, type):
+    url = 'http://127.0.0.1:8000'
+    
+    qr=TestQR.objects.filter(test__id=id, type=type)
 
-    except TestQR.DoesNotExist:
+
+    if not qr:
+        
         webinar=Webinar.objects.get(id=id)
-        url_path=f'{url}/webinar/questionaire/{webinar.id}'
-        qr=qrcode.make(url_path)
+        url_path=f'{url}/webinar/display_test/{id}/{type}'
+        qr = qrcode.make(url_path)
+        
+        # Save to database
+        buffer = BytesIO()
+        qr.save(buffer, format='PNG')
+        qr_img = buffer.getvalue()
+        
 
-    except Webinar.DoesNotExist:
-        test=Test_Question.objects.get(id=id)
-        url_path=f'{url}/webinar/display_test/{id}/{test.test_type}'
-        qr=qrcode.make(url_path)
+        qr_db = TestQR.objects.create(
+            test=webinar,
+            type=type,
+            name=f'QR_test_{id}'
+        )
+        qr_db.img.save(
+            f'QR_TEST_ID_{id}.png', ContentFile(qr_img))
+        
+    return redirect('display_qr', id, type)
 
-    except Test_Question.DoesNotExist:
-        pass
-      
-    buffer=BytesIO()
-    qr.save(buffer, format='PNG')
-    qr_img=buffer.getvalue()
-    qr_db=TestQR.objects.create(
-            test_id=id,
-            name=f'QR_test_{id}')
-    qr_db.img.save(
-        f'QR_TES_ID{id}', ContentFile(qr_img))
-    return redirect('display_qr', id)
-
-def display_qr(request, id):
-    qr=TestQR.objects.get(id=id)
+def display_qr(request, id, type):
+ 
+    qr=TestQR.objects.get(test__id=id, type=type)
     return render(request, 'exam_portal/display_qr.html',{
         'qr':qr
     })
         
+def display_test(request, id, type):
+    webinar=Webinar.objects.get(id=id)
+
+    question=webinar.question.filter(test_type=type)
+    
+    return render(request, "exam_portal/display_test.html", {
+        "questions":question,
+        "id":id,
+        "type":type
+    })
+
 
 def create_certificate(request,id):
     webinar=Webinar.objects.get(id=id)
-    return render(request, 'exam_portal/createCertificate.html', {
-        "webinar":webinar
-        })
+    try:
+
+        certificate=CertificateTemplate.objects.get(webinar=webinar)
+        return redirect("redirect_certificate", certificate.id)
+
+        
+    except CertificateTemplate.DoesNotExist:
+
+        return render(request, 'exam_portal/createCertificate.html', {
+            "webinar":webinar
+            })
 
 def redirect_certificate(request, id):
     img=CertificateTemplate.objects.get(id=id)
@@ -130,8 +149,6 @@ def upload_img(request, id):
 
 
         except CertificateTemplate.DoesNotExist:
-
-
             img_save=CertificateTemplate.objects.create(
                 webinar=webinar,
                 img=img,

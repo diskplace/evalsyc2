@@ -4,8 +4,10 @@ from . import views
 urlpatterns = [
     path('result/<int:id>/',views.display_result, name='display_result'), 
     path("display_result/<int:id>/", views.display_result , name="display_result"),
-    path("generate_qr/<int:id>/", views.generate_qr , name="generate_qr"),
-    path("display_qr/<int:id>/", views.display_qr , name="display_qr"),
+    path("generate_qr/<int:id>/<str:type>/", views.generate_qr , name="generate_qr"),
+    path("display_qr/<int:id>/<str:type>/", views.display_qr , name="display_qr"),
+    path("display_test/<int:id>/<str:type>/", views.display_test , name="display_test"),
+
 
     path("create_certificate/<int:id>/", views.create_certificate, name="create_certificate"),
     path("redirect_certificate/<int:id>/", views.redirect_certificate , name="redirect_certificate"),

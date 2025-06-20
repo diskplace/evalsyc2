@@ -7,7 +7,7 @@
 
 {% block body %}
 
-<form method="post" action="{% url 'record_test' id , type %}">
+<form method="post" action="">
     {% csrf_token %}
 
     {% for question in questions %}

@@ -4,22 +4,16 @@
 
 {% block css %} 
 
-<link rel="stylesheet" href="{% static 'css/create_test.css' %}?={{ timestamp }}">
+<link rel="stylesheet" href="{% static 'webinar/css/create_test.css' %}">
 
 {% endblock %}
 
 {% block title %} <title>Create Test</title> {% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1>Generate QR</h1>
-    <div><a href="" class="qr-button">Generate</a></div>
 
 
-
-</div>
-
-<div class="container">
+<div class="create-q-container">
     <h1>Create New Test Question</h1>
     
     <div class="instructions">
@@ -33,7 +27,7 @@
         <p><strong>Note:</strong> You must provide both a question and its correct answer before submitting.</p>
     </div>
 
-    <form action="{% url 'create_test' id %}" method="post" id="form" name="form" >
+    <form action="{% url 'create_test' id %}" class="create-test" method="post" id="form" name="form" >
         {% csrf_token %}
        
         <div class="mc_choice_div-group" id="Q_section">
@@ -42,7 +36,7 @@
                 <option value="pre_test">Pre-test</option>
                 <option value="post_test">Post test</option>
             </select>
-           
+    
             <label for="question">Question:</label>
             <input id="question" name="question" type="text" placeholder="Enter your question here..." required>
             <div class="error-message" id="question-error">Please enter a question</div>
@@ -57,14 +51,13 @@
             <div class="error-message" id="type-error">Please select a question type</div>
         </div>
 
-        <!-- Fill in the blanks section -->
         <div class="mc_choice_div-group" id="FB_SECTION" style="display: none;">
             <label for="FB">Correct Answer:</label>
             <input type="text" id="FB" name="FB" placeholder="Enter the correct answer...">
             <div class="error-message" id="fb-error">Please provide the correct answer</div>
         </div>
 
-        <!-- Multiple Choices -->
+  
         <div class="mc_choice_div-group" id="MC_SECTION" style="display: none;">
             <label for="NC">Number of Choices:</label>
             <input id="NC" name="NC" min="2" max="5" value="2" type="number">
@@ -78,9 +71,12 @@
 </div>
 
 <!-- Pre Test -->
-<div id="pre_test" class="container">
-<h2>pre_test</h2>
-<p>jsdfaklf</p>
+<div class="question-container">
+
+    <div id="pre_test" class="container pre-test" >
+<h2>pretest</h2>
+<div><a href="{% url 'generate_qr' id 'pre_test' %}">Generate Qr</a></div>
+<p></p>
 
 <form action="{% url 'edit_test' id  %}" method="post" id="pre_test_container">
     {% csrf_token %}
@@ -92,11 +88,10 @@
 
 </div>
 
-<!-- Post Test-->
-<div id="post_test" class="container">
+<div id="post_test" class="container post-test">
 
-<h2>post test</h2>
-
+<h2>Post test</h2>
+<div><a href="{% url 'generate_qr' id 'post_test' %}">Generate Qr</a></div>
 <form action="{% url 'edit_test' id  %}" method="post" id="post_test_container">
     {% csrf_token %}
 
@@ -104,6 +99,7 @@
 
 
 
+</div>
 </div>
 
 <!--Display Question -->
@@ -114,7 +110,7 @@
                 const post_test=document.getElementById("post_test_container");
 
                 const div=document.createElement("div");
-                div.innerHTML=`<label><h5>Question:</h5><input type="text" value="{{ question.question }}" id="question_{{ question.id }}" name="question_{{ question.id }}" class="question">
+                div.innerHTML=`<label><h5>Question:</h5><input class="question" type="text" value="{{ question.question }}" id="question_{{ question.id }}" name="question_{{ question.id }}" class="question">
                     <div>
                         <a href= "{% url 'delete_question' question.id %}">Delete</a>
                         </div>
@@ -169,7 +165,7 @@
                 })
             </script>
     {% endfor %}
-<div class="container"></div>
+
 
 
 <!-- Process adding question-->

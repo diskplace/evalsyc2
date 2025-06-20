@@ -210,9 +210,9 @@
       <a href="#" class="notification-icon position-relative">
           <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
       </a>
-      <span class="username fw-semibold">Michael Yumul</span>
+      <span class="username fw-semibold">{{ user.username }}</span>
       <a class="profile">
-          <img src="{% static 'asset/2.jpg' %}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+          <img src="{{ user.user_profile.img.url }}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
       </a>
   </div>
 </div>
@@ -246,53 +246,54 @@
     <div class="registration-section">
         <div class="registration-form">
             <h3 class="form-title">User Registration</h3>
-            <form  actions="{% url 'register_user' %}" method="POST" >
+            <form  action="{% url 'register_user' %}" method="POST" >
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="user-name">Username: </label>
+                    <label for="user_fullname">Full Name: </label>
+                    <input type="text" id="user_fullname" name="user_fullname" class="form-control" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label for="user_email">Email: </label>
+                    <input type="email" id="user_email" name="user_email" class="form-control" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="username">School Id:</label>
                     <input type="text" id="username" name="username"class="form-control" placeholder="Enter User Username">
                 </div>
                 <div class="form-group">
-                    <label for="user-name">Full Name: </label>
-                    <input type="text" id="user-name" name="full_name" class="form-control" placeholder="Enter full name">
-                </div>
-                <div class="form-group">
-                    <label for="user-email">Email: </label>
-                    <input type="email" id="user-email" name="gmail" class="form-control" placeholder="Enter email">
-                </div>
-                <div class="form-group">
-                    <label for="number">Phone number: </label>
-                    <input type="tel" id="number" name="number" class="form-control" placeholder="Enter email">
-                </div>
-                <div class="form-group">
-                    <label for="user-password">Password</label>
-                    <input type="password" id="user-password" name="password" class="form-control" placeholder="Enter password">
+                    <label for="user_password">Password</label>
+                    <input type="password" id="user_password" name="user_password" class="form-control" placeholder="Enter password">
                 </div>
                 <button type="submit" class="btn btn-primary">Register User</button>
             </form>
         </div>
         
         <div class="registration-form">
-            <h3 class="form-title">Admin Registration</h3>
-            <form  actions="{% url 'create_admin' %}" method="POST" >
+            <h3 class="form-title">Staff Registration</h3>
+            <form  action="{% url 'create_admin' %}" method="POST" >
+                {% csrf_token %}
                 <div class="form-group">
-                    <label for="admin-name">Full Name</label>
-                    <input type="text" id="admin-name" class="form-control" placeholder="Enter full name">
+                    <label for="admin_fullname">Full Name</label>
+                    <input type="text" id="admin_fullname" name="admin_fullname" class="form-control" placeholder="Enter full name">
                 </div>
                 <div class="form-group">
-                    <label for="admin-email">Email</label>
-                    <input type="email" id="admin-email" class="form-control" placeholder="Enter email">
+                    <label for="admin_email">Email</label>
+                    <input type="email" id="admin_email" name="admin_email"class="form-control" placeholder="Enter email">
                 </div>
                 <div class="form-group">
-                    <label for="admin-password">Password</label>
-                    <input type="password" id="admin-password" class="form-control" placeholder="Enter password">
+                    <label for="admin_password">Password</label>
+                    <input type="password" id="admin_password" name="admin_password" class="form-control" placeholder="Enter password">
                 </div>
                 <div class="form-group">
-                    <label for="admin-code">Admin Code</label>
-                    <input type="password" id="admin-code" class="form-control" placeholder="Enter admin code">
+                    <label for="admin_code">Admin Code</label>
+                    <input type="password" id="admin_code" name="admin_code" class="form-control" placeholder="Enter admin code">
                 </div>
                 <button type="submit" class="btn btn-primary">Register Admin</button>
+
+                
             </form>
+            <a href="{% url 'generete_authorization_key' %}" style="margin-top: 20px;" class="btn btn-primary">Request Admin Authorization Code</a>
+            
         </div>
     </div>
     
@@ -312,42 +313,14 @@
                 <div class="col-email">{{user.email}}</div>
                 <div class="col-status"><span class="status-badge status-active">Active</span></div>
             <div class="col-actions">
-                <button class="btn btn-sm btn-warning">Suspend</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
+                
+                <a  href="{%  url 'delete_user' user.id %}" class="btn btn-sm btn-danger">Delete</a>
             </div>
             </div>        
         
         {% endfor %}
-        
-        <div class="table-row">
-            <div class="col-name">John Doe</div>
-            <div class="col-email">john.doe@example.com</div>
-            <div class="col-status"><span class="status-badge status-active">Active</span></div>
-            <div class="col-actions">
-                <button class="btn btn-sm btn-warning">Suspend</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-            </div>
-        </div>
-        
-        <div class="table-row">
-            <div class="col-name">Jane Smith</div>
-            <div class="col-email">jane.smith@example.com</div>
-            <div class="col-status"><span class="status-badge status-suspended">Suspended</span></div>
-            <div class="col-actions">
-                <button class="btn btn-sm btn-success">Activate</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-            </div>
-        </div>
-        
-        <div class="table-row">
-            <div class="col-name">Badang Pedro</div>
-            <div class="col-email">Badang.j@example.com</div>
-            <div class="col-status"><span class="status-badge status-active">Active</span></div>
-            <div class="col-actions">
-                <button class="btn btn-sm btn-warning">Suspend</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-            </div>
-        </div>
+     
+   
     </div>
     
  

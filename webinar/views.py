@@ -6,7 +6,9 @@ from django.conf import settings
 from django.core import serializers
 from django.http import JsonResponse
 import qrcode
+from django.contrib import messages 
 import re
+from login.models import UserProfile
 # Create your views here.
 
 def make_webinar(request):
@@ -31,7 +33,8 @@ def make_webinar(request):
         for i in range(1,number_of_speaker+1):
             speaker_name=request.POST.get(f'speaker_name{i}')
             speaker_email=request.POST.get(f'speaker_email{i}')
-            speaker=Speaker(webinar=webninar, speaker_name=speaker_name, speaker_email=speaker_email)
+            img=request.FILES.get(f'speaker_photo{i}')
+            speaker=Speaker(webinar=webninar,img=img, name=speaker_name, email=speaker_email)
             speaker.save()
         return redirect('index')
 
@@ -60,21 +63,50 @@ def events_data(request):
     return JsonResponse(events, safe=False)
 
 
+def user_events_data(request):
+    events = []
+    attendances = WebinarAttendees.objects.filter(user=request.user)
+
+    for attendance in attendances:
+        webinar = attendance.webinar  
+        events.append({
+            'title': webinar.title,
+            'start': webinar.start_date.isoformat() if webinar.start_date else None,
+            'end': webinar.until_date.isoformat() if webinar.until_date else None,
+        })
+
+    return JsonResponse(events, safe=False)
+
+
 def register(request, id):
     webinar = get_object_or_404(Webinar, id=id)
+
+
+    attendees = WebinarAttendees.objects.filter(webinar=webinar)
 
     if request.method == 'POST':
         school_id = request.POST.get('school_id')
         email = request.POST.get('email')
 
-        attendee = WebinarAttendees(webinar=webinar, school_id=school_id, email=email)
+        try:
+            user = UserProfile.objects.get(school_id=school_id)
+        except UserProfile.DoesNotExist:
+            messages.error(request, "School ID not found.")
+            return redirect('register', id=webinar.id)
+
+        already_registered = WebinarAttendees.objects.filter(webinar=webinar, user=user).exists()
+
+        if already_registered:
+            messages.warning(request, "You are already registered for this webinar.")
+            return redirect('register', id=webinar.id)
+
+        attendee = WebinarAttendees(webinar=webinar, user=user, school_id=school_id, email=email)
         attendee.save()
 
-        # Email subject and message
         subject = f"Registration Confirmed: {webinar.title}"
         message = (
             f"Hello,\n\n"
-            f"You Are now Register \"{webinar.title}\".\n\n"
+            f"You are now registered for \"{webinar.title}\".\n\n"
             f"📅 Date: {webinar.start_date}\n"
             f"📍 Location: {webinar.venue}\n\n"
             f"We look forward to seeing you there!\n\n"
@@ -82,7 +114,6 @@ def register(request, id):
             f"The Webinar Team"
         )
 
-  
         send_mail(
             subject,
             message,
@@ -91,11 +122,14 @@ def register(request, id):
             fail_silently=False,
         )
 
-        return redirect(register, webinar.id)
+        messages.success(request, "Registration successful!")
+        return redirect('register', id=webinar.id)
 
     return render(request, 'webinar/register.html', {
-        'webinar': webinar
+        'webinar': webinar,
+        'attendees': attendees
     })
+
 
 #validation
 def validation(request, id):
@@ -114,7 +148,6 @@ def validation(request, id):
     return render(request, "webinar/evaluation/validation.html", {
         "id":id
     })
-
 
 #questionaire
 def questionaire(request, id):
@@ -169,8 +202,6 @@ def questionaire(request, id):
     return render(request,'webinar/evaluation/workshop.html',{
         'webinar':webinar
     })
-
-
 
 def create_test(request, id):
     webinar = get_object_or_404(Webinar, id=id)
@@ -234,7 +265,8 @@ def redirect_create_test(request, id):
         'id': id,
         'questions': question,
         'choices': json_choices,
-        'count': q_count
+        'count': q_count,
+        'webinar':webinar
         
     })
 
@@ -299,16 +331,6 @@ def delete_question(request, id):
     test.delete()
     return redirect(redirect_create_test, id=test.webinar.id)
 
-def display_test(request, id, type):
-    webinar=Webinar.objects.get(id=id)
-
-    question=webinar.question.filter(test_type=type)
-    
-    return render(request, "webinar/display_test.html", {
-        "questions":question,
-        "id":id,
-        "type":type
-    })
 
 def record_test(request, id, type):
     webinar=Webinar.objects.get(id=id)

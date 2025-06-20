@@ -4,7 +4,7 @@ body{
 .contents {
     
     padding: 2rem;
-    background-color: #e7e9f1;
+    background-color: #dce0ee;
 
 
 }
@@ -99,7 +99,15 @@ p{
     transform: translateY(-4px);
 
     box-shadow: 10px 10px 10px#a5afce;
-    border: 1px dashed rgb(139, 139, 139) ;
+    
+    border: 1px dashed rgb(137, 2, 155);
+   
+
+
+
+
+    border-radius: 3%;
+    
 
     
 }

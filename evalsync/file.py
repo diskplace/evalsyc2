@@ -10,3 +10,6 @@ EMAIL_HOST_PASSWORD = 'vseu zfix wrtg nfhe'
 #SMS
 SMS_API_KEY='b2c02e2e2dba83692a196d764c54e6de'
 SMS_ENDPOINT="https://api.semaphore.co/api/v4/messages"
+
+
+ADMIN_EMAIL='johnphilipbaylon3@gmail.com'

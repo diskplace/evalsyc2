@@ -20,7 +20,7 @@
       </a>
       <span class="username fw-semibold">{{ user.username }}</span>
       <a class="profile">
-          <img src="{% static 'asset/2.jpg' %}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+          <img src="{{ user.user_profile.img.url }}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
       </a>
   </div>
 </div>

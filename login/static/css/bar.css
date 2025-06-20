@@ -6,19 +6,21 @@
     left: 0; 
     right: 0;
     height: 64px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
-    box-shadow: 0 4px 4px rgba(0,0,0,0.05);
+    background-color: #2D3748;
+    
+    box-shadow: 0 8px 8px rgba(0,0,0,0.05);
     z-index: 100;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     padding: 0 24px;
+    color:white;
 }
 
-/* Fix bell icon size */
+
 .bell {
     width: 24px;
+    color: white;
 }
 
 
@@ -52,13 +54,14 @@
 
 /* Sidebar */
 .sidebar {
-    width: 190px;
-    background-color: #fff;
+    width: 220px;
+    background-color: rgb(255, 255, 255);
     padding: 20px;
     border-right: 1px solid #ddd;
     display: flex;
     flex-direction: column;
     z-index: 200;
+    flex-shrink: 0;
 }
 
 .logo {
@@ -66,6 +69,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 30px;
+    
 }
 
 .logo img {
@@ -74,9 +78,10 @@
 }
 
 .logo h2 {
-    font-size: 18px;
+    font-size: 22px;
     color: #1f1f1f;
     margin: 0;
+    font-weight: 600;
 }
 
 /* Navigation */
@@ -91,7 +96,8 @@
     text-decoration: none;
     padding: 8px 12px;
     border-radius: 8px;
-    transition: background 0.2s ease;
+    transition: background 2s ease-in, color 2s ease-in;
+    
 }
 
 .nav-item:hover {
@@ -99,10 +105,24 @@
 }
 
 .nav-item.active {
-    background-color: #5a60f2;
+    background: linear-gradient(135deg, #4f46e5, #8b5cf6);
     color: #fff;
     font-weight: bold;
+    animation: flip 1.5s ease
+    
 }
+
+@keyframes flip {
+    0%{
+
+    }
+    100%{
+        transform: rotatex(360deg);
+
+    }
+    
+}
+
 .logout{
     text-align: center;
     margin-top: auto;
@@ -140,6 +160,7 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
+
 
 
 

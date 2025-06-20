@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import Number
+from .models import UserProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -9,7 +9,7 @@ import pyotp
 from django.http import JsonResponse
 from django.utils import timezone
 
-from webinar.models import Webinar
+from webinar.models import Webinar,WebinarAttendees
 # Create your views here.
 
 
@@ -24,12 +24,8 @@ def index(request):
         if request.user.is_superuser:
             return redirect('admin_events')
         else:
-            return render(request, 'login/user_dashboard.html', {
-            'webinars':webinar
-        })
+            return redirect('user_dashboard')
 
-            
-    
     return render(request, 'login/index.html',{
         'webinars':upcoming_webinars
     })
@@ -50,32 +46,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect(login_view)
-
-def register(request):
-    if request.method=="POST":
-        username=request.POST.get("username")
-        first_name=request.POST.get("first_name")
-        last_name=request.POST.get("last_name")
-        email=request.POST.get("gmail")
-        number=request.POST.get("number")
-        password=request.POST.get("password")
-
-        if User.objects.filter(username=username).exists():
-            messages.error(request,"username Already Exist")
-        elif User.objects.filter(email=email).exists():
-            messages.error(request,"Email Already Exist")
-        else:
-            user= User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
-            user.save()
-
-            number=Number(user=user,number=number)
-            number.save()
-
-            messages.success(request,"You are now Registered")
-            return redirect(login_view)
-
-        return redirect(login_view)
-    return render(request, 'login/register.html')
 
 def generate_otp(request):
     username = request.session.get('username')
@@ -131,10 +101,34 @@ def event_data(request):
 
 #user
 def user_dashboard(request):
-    return render(request, 'login/user_dashboard.html')
 
+    today=timezone.now().date()
+    upcoming_webinar=WebinarAttendees.objects.filter(user=request.user, webinar__start_date__gte=today )   
+    past_webinar=WebinarAttendees.objects.filter(user=request.user, webinar__start_date__lt=today )
+    upcoming_messages=""
+    history_messages=""
+    
+    if not upcoming_webinar.exists():
+        upcoming_messages="No webinar asssigned to you please wait for further notice"
+    
+    if not past_webinar.exists():
+        history_messages="No Webinar Currently"
+
+
+    return render(request, "login/user_nav/user_dashboard.html",{
+        "upcoming_webinars":upcoming_webinar,
+        "past_webinars":past_webinar,
+        "upcoming_message":upcoming_messages,
+        "past_message":history_messages
+    })
+    
 def calendar(request):
-    return render(request,"login/user_nav/calendar.html")
+    today=timezone.now().date()
+    upcoming_webinar=WebinarAttendees.objects.filter(user=request.user, webinar__start_date__gte=today ) 
+
+    return render(request,"login/user_nav/calendar.html",{
+        'upcoming_webinars':upcoming_webinar
+    })
 
 def attendance(request):
     return render(request, "login/user_nav/attendance.html")
@@ -143,11 +137,32 @@ def aboutus(request):
     return render(request, "login/user_nav/aboutus.html")
 
 def certificate(request):
-    return render(request, "login/user_nav/certificate.html")
+    
+    today=timezone.now().date()
+    upcoming_webinar=WebinarAttendees.objects.filter(user=request.user, webinar__start_date__gte=today )   
+    past_webinar=WebinarAttendees.objects.filter(user=request.user, webinar__start_date__lt=today )
+    upcoming_messages=""
+    history_messages=""
+    
+    if not upcoming_webinar.exists():
+        upcoming_messages="No webinar asssigned to you please wait for further notice"
+    
+    if not past_webinar.exists():
+        history_messages="No Webinar Currently"
+
+
+    return render(request, "login/user_nav/certificate.html",{
+        "upcoming_webinars":upcoming_webinar,
+        "past_webinars":past_webinar,
+        "upcoming_message":upcoming_messages,
+        "past_message":history_messages
+    })
 
 def evaluation_nav(request):
     return render(request, "login/user_nav/evaluation.html")
 
+def user_setting(request):
+    return render(request, "login/user_nav/user_setting.html")
 
 #ADMIN
 def admin_panel(request):
@@ -155,7 +170,6 @@ def admin_panel(request):
     return render(request, 'login/admin_panel.html',{
         'webinars':webinars
     })
-
 
 def admin_events(request):
     return render(request,"login/admin_panel/events.html")
@@ -183,10 +197,8 @@ def admin_users(request):
 
 def register_user(request):
     if request.method=="POST":
-        username=request.POST.get("username")
-        full_name=request.POST.get('fullname').strip()
+        full_name=request.POST.get('user_fullname',' ').strip()
         name=full_name.split(" ")
-
         if not name:
             first_name = ''
             last_name = ''
@@ -197,9 +209,10 @@ def register_user(request):
             first_name = name[0]
             last_name = ' '.join(name[1:])
 
-        email=request.POST.get("gmail")
-        number=request.POST.get("number")
-        password=request.POST.get("password")
+        email=request.POST.get("user_email")
+        password=request.POST.get("user_password")
+        school_id=request.POST.get("school_id")
+        username=name[0]
 
         if User.objects.filter(username=username).exists():
             messages.error(request,"username Already Exist")
@@ -207,21 +220,127 @@ def register_user(request):
             messages.error(request,"Email Already Exist")
         else:
             user= User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
-            user.save()
+            profile=UserProfile.objects.create(user=user.id, school_id=school_id)
+    return redirect('admin_users')
 
-            number=Number(user=user,number=number)
-            number.save()
-    return redirect('admin_events')
+def generete_authorization_key(request):
+   
+    otp=pyotp.random_base32()
+    code=pyotp.TOTP(otp).now()
+    request.session['authorization_key']=code
+
+    send_mail(
+    'Request for Admin Authorization Code',
+    f'''User {request.user} has requested to create an admin account.
+    If you approve this request, please share the following authorization code:
+
+    {code}
+    ''',
+        f'{settings.EMAIL_HOST_USER}',  
+        [f'{settings.ADMIN_EMAIL}'], )
+    return redirect('admin_users')
+            
 
 def create_admin(request):
-    if request.method=='POST':
-        full_name=request.POST.get().split(" ")
-        User.objects.create_superuser(
-        )
-    
+    if request.method == 'POST':
+        if 'authorization_key' not in request.session:
+            messages.error(request, 'Please request an Authorization Key before proceeding.')
+            return redirect('admin_users')
+
+        if request.POST.get('admin_code') == request.session.get('authorization_key'):
+            del request.session['authorization_key']
+            full_name = request.POST.get('admin_fullname', '').strip()
+            name = full_name.split(" ")
+            first_name = name[0] 
+            last_name = ' '.join(name[1:])
+
+            email = request.POST.get("admin_email")
+            password = request.POST.get("admin_password")
+            username = name[0]
+
+            if User.objects.filter(username=username).exists():
+                messages.error(request, "Username already exists.")
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, "Email already exists.")
+            else:
+                user = User.objects.create_user(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    password=password
+                )
+                user.is_staff = True
+                user.save()
+                messages.success(request, "Admin account created successfully.")
+        else:
+            messages.error(request, "Invalid authorization code.")
+
+    return redirect('admin_users')
+
 
 def delete_user(request, id):
     user=User.objects.filter(id=id)
     user.delete()
 
     return redirect("admin_users")
+
+
+def edit_user(request):
+    user = User.objects.get(id=request.user.id)
+    profile = UserProfile.objects.get(user=user)
+
+    if request.method == 'POST':
+        full_name = request.POST.get('fullname', '').strip()
+        if full_name:
+            name = full_name.split(" ")
+            if not name:
+                first_name = ''
+                last_name = ''
+            elif len(name) == 1:
+                first_name = name[0]
+                last_name = ''
+            else:
+                first_name = name[0]
+                last_name = ' '.join(name[1:])
+            user.username=first_name
+            user.first_name = first_name
+            user.last_name = last_name
+
+        email = request.POST.get("email")
+        img = request.FILES.get("img")  
+        number = request.POST.get('number')
+        school = request.POST.get('school')
+
+        if email:
+            user.email = email
+
+        user.save()
+
+        if img:
+            profile.img = img
+        if number:
+            profile.number = number
+        if school:
+            profile.school = school
+        profile.save()
+
+    if request.user.is_superuser or request.user.is_staff:
+        return redirect("admin_setting")
+    else:
+        return redirect("user_setting")
+
+
+
+def change_password(request):
+    user=User.objects.get(id=request.user.id)
+    if request.method=='POST':
+        if request.POST.get("current_password")==user.password:
+            new_password=request.POST.get("new_password")
+            user.password=new_password
+            user.save()
+    if request.user.is_superuser or request.user.is_staff:
+        return redirect("admin_setting")
+    else:
+        return redirect("user_setting")
+

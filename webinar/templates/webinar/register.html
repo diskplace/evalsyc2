@@ -1,16 +1,13 @@
 {% extends "login/layout.html" %}
-
 {% load static %}
 
-{% block css %} <link rel="stylesheet" href="{% static 'css/register.css' %}"> {% endblock %}
-
+{% block css %} <link rel="stylesheet" href="{% static 'webinar/css/register_attendees.css' %}"> {% endblock %}
 
 {% block body %}
-
 <div class="container-fluid registration-container">
-    <form action="{% url 'register' webinar.id %}" method="post">
+    <form class="registration-form" action="{% url 'register' webinar.id %}" method="post">
         {% csrf_token %}
-        <h2 class="form-title">Register</h2>
+        <h2 class="form-title">Register for {{ webinar.title }}</h2>
 
         <div class="form-group">
             <label for="school_id">School ID:</label>
@@ -25,7 +22,31 @@
         <input class="submit-button" type="submit" value="Register">
     </form>
 
-    <div><a href="{% url 'index' %}">Back to the homepage</a></div>
+    <div class="attendees-section">
+        {% if attendees %}
+        <div class="attendees-container">
+            <h3 class="attendees-title">Registered Attendees</h3>
+            <div class="attendees-list">
+                {% for attendee in attendees %}
+                <div class="attendee-card">
+                    {% if attendee.user.user_profile.img.url %}
+                    <img src="{{ attendee.user.user_profile.img.url }}" alt="{{ attendee.name }}" class="attendee-avatar">
+                    {% else %}
+                    <div class="attendee-avatar" style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user" style="color: #999; font-size: 1.5rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="attendee-info">
+                        <div class="attendee-name">{{ attendee.user.username }}</div>
+                        <div class="attendee-id">{{ attendee.user.user_profile.school_id }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
 </div>
 
+<a href="{% url 'index' %}" class="back-link">Back to the homepage</a>
 {% endblock %}

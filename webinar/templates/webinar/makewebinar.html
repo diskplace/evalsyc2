@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/makewebinar.css' %}">
+<link rel="stylesheet" href="{% static 'webinar/css/create_webinar.css' %}">
 {% endblock %}
 
 {% block body %}
@@ -101,6 +101,9 @@
                         
                         <label for="speaker_email${i}">Email:</label>
                         <input type="email" id="speaker_email${i}" name="speaker_email${i}" required class="form-control">
+
+                        <label for="speaker_photo${i}">Upload Photo:</label>
+                        <input type="file" id="speaker_photo${i}" name="speaker_photo${i}" required class="form-control">
                     `;
                     speakersContainer.appendChild(div);
                 }
