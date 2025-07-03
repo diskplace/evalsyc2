@@ -7,7 +7,7 @@
 {% block css %} 
 <link rel="stylesheet" href="{% static 'css/admin_panel_css/admin_bar.css' %}"> 
 <link rel="stylesheet" href="{% static 'css/admin_panel_css/calendar.css' %}">
-<link rel="stylesheet" href="{% static 'css/admin_panel_css/transition.css' %}">
+
 {% endblock %}
 {% block js %}  
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
@@ -67,26 +67,26 @@
 
 
 
+ 
+
       <section class="events-section">
         <h3>Upcoming Events</h3>
-        <div class="event-card">
-          <span class="dot green"></span>
-          <div>
-            <strong>Teachers' Training</strong><br>
-            Central High School<br>
-            <small>9:00 AM – 12:00 PM</small>
-          </div>
-        </div>
-        <div class="event-card">
-          <span class="dot blue"></span>
-          <div>
-            <strong>Welfare Forum</strong><br>
-            Westview Academy<br>
-            <small>2:30 PM – 4:00 PM</small>
-          </div>
+
+        <div class="event-container">
+          {% if upcoming_webinars %}
+            {% for up_webinar in upcoming_webinars %}
+              <div class="event-card">
+                <h6>{{ up_webinar.webinar.title }}</h6>
+                <p class="address">{{ up_webinar.webinar.address }}</p>
+                <p class="date">{{ up_webinar.webinar.start_date }} – {{ up_webinar.webinar.until_date }}</p>
+              </div>
+            {% endfor %}
+          {% else %} 
+            <p class="no-event">No Scheduled Upcoming Webinar</p>
+          {% endif %}
         </div>
 
-        
+
       </section>
     </div>
   </div>

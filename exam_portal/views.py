@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from webinar.models import Test_Question, TestResponse, ResponseQuestionaire,Webinar,WebinarAttendees
-from .models import TestResult,TestQR, CertificateTemplate
-from django.shortcuts import redirect
-
+from .models import TestResult,TestQR, CertificateTemplate, EvalQR
+from django.shortcuts import redirect, get_object_or_404
+import json
 from django.core.files.base import ContentFile
-
+from .serializer import CertificateSerilize
 import qrcode
 from io import BytesIO
 
@@ -88,9 +88,47 @@ def generate_qr(request, id, type):
         
     return redirect('display_qr', id, type)
 
+def qr_evalution(request, id):
+    webinar=get_object_or_404(Webinar, id=id)
+    type=webinar.event_type
+    qr=EvalQR.objects.filter(test__id=id, type=type)
+    
+    url=f"http://127.0.0.1:8000/webinar/questionaire/{webinar.id}/"
+
+    if not qr:
+        
+        webinar=Webinar.objects.get(id=id)
+        url_path=f'{url}/webinar/display_test/{id}/{type}'
+        qr = qrcode.make(url_path)
+        
+        # Save to database
+        buffer = BytesIO()
+        qr.save(buffer, format='PNG')
+        qr_img = buffer.getvalue()
+        
+
+        qr_db = EvalQR.objects.create(
+            test=webinar,
+            type=type,
+            name=f'QR_test_{id}'
+        )
+        qr_db.img.save(
+            f'QR_TEST_ID_{id}.png', ContentFile(qr_img))
+        
+    return redirect('display_qr', id, type)
+
+
+
+
+        
+    
+
+
 def display_qr(request, id, type):
- 
-    qr=TestQR.objects.get(test__id=id, type=type)
+    try:
+        qr=TestQR.objects.get(test__id=id, type=type)
+    except TestQR.DoesNotExist:
+        qr=EvalQR.objects.get(test__id=id, type=type)
     return render(request, 'exam_portal/display_qr.html',{
         'qr':qr
     })
@@ -144,9 +182,6 @@ def upload_img(request, id):
             img_save=CertificateTemplate.objects.get(webinar=webinar)
             img_save.img=img
             img_save.save()
-        
-
-
 
         except CertificateTemplate.DoesNotExist:
             img_save=CertificateTemplate.objects.create(
@@ -182,3 +217,16 @@ def save_certificate(request, id):
         request.session['apply_edit']=True
 
         return redirect('redirect_certificate', certificate.id)
+
+
+def cert_preview(request, id):
+    webinar=get_object_or_404(Webinar, id=id)
+    cert=get_object_or_404(CertificateTemplate, webinar=webinar)
+    
+    cert_dic=CertificateSerilize(cert).data
+    cert_json=json.dumps(cert_dic)
+
+    return render(request, 'exam_portal/certificatepreview.html', {
+        'certificate':cert_json
+
+    })

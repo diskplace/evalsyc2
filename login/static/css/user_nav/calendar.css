@@ -160,15 +160,16 @@ body {
 
 .events-section {
   position: absolute;
-  right: 20px;
-  top: 100px; /* adjust as needed */
-  width: 300px; /* don't change size per your request */
+  right: 0;
+  top: 100px; 
+  width: 210px; 
   background-color: #ffffff;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', sans-serif;
   z-index: 2;
+
 }
 
 .events-section h3 {
@@ -177,12 +178,14 @@ body {
   margin-bottom: 15px;
   color: #4c43ce;
   text-align: center;
+  
 }
 
 .event-container {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  
 }
 
 .event-card {
@@ -192,6 +195,7 @@ body {
   border-left: 4px solid #4c43ce;
   box-shadow: 0 2px 6px rgba(79, 70, 229, 0.05);
   transition: all 0.2s ease;
+
 }
 
 .event-card:hover {

@@ -58,7 +58,8 @@
         <a class="register" href="{% url 'register' webinar.id %}"><i class="fas fa-user-plus"></i> Register Attendees</a>
         <a class="statistics" href="{% url 'display_result' webinar.id %}"><i class="fas fa-chart-bar"></i> View Statistics</a>
         <a class="create-test"  href="{% url 'create_test' webinar.id %}"><i class="fas fa-edit"></i> Create Test</a>
-     
+        <a class="create-test"  href="{% url 'questionaire' webinar.id %}"><i class="fas fa-edit"></i>Evaluation</a>
+
     </div>
 </section>
 

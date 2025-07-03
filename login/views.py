@@ -6,10 +6,11 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib import messages
 import pyotp
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
-
+from django.core import serializers
 from webinar.models import Webinar,WebinarAttendees
+from exam_portal.models import CertificateTemplate
 # Create your views here.
 
 
@@ -137,26 +138,29 @@ def aboutus(request):
     return render(request, "login/user_nav/aboutus.html")
 
 def certificate(request):
-    
-    today=timezone.now().date()
-    upcoming_webinar=WebinarAttendees.objects.filter(user=request.user, webinar__start_date__gte=today )   
-    past_webinar=WebinarAttendees.objects.filter(user=request.user, webinar__start_date__lt=today )
-    upcoming_messages=""
-    history_messages=""
-    
-    if not upcoming_webinar.exists():
-        upcoming_messages="No webinar asssigned to you please wait for further notice"
-    
-    if not past_webinar.exists():
-        history_messages="No Webinar Currently"
+    today = timezone.now().date()
 
+    ongoing_webinars = Webinar.objects.filter(
+        until_date__gt=today,
+        attendees__user=request.user
+    )
+    completed_webinars = Webinar.objects.filter(
+        until_date__lt=today,
 
-    return render(request, "login/user_nav/certificate.html",{
-        "upcoming_webinars":upcoming_webinar,
-        "past_webinars":past_webinar,
-        "upcoming_message":upcoming_messages,
-        "past_message":history_messages
+        attendees__user=request.user
+    )
+    
+    return render(request, 'login/user_nav/certificate.html', {
+        'ongoind_webinars':ongoing_webinars,
+        'completed_webinars': completed_webinars
     })
+
+
+def certificate_data(request, id):
+    webinar=get_object_or_404(Webinar, id=id)
+    certificate=CertificateTemplate.objects.filter(webinar=webinar)
+    data = serializers.serialize('json', certificate)
+    return HttpResponse(data)
 
 def evaluation_nav(request):
     return render(request, "login/user_nav/evaluation.html")
@@ -178,12 +182,22 @@ def admin_calendar(request):
     return render(request,"login/admin_panel/calendar.html")
 
 def admin_certificate(request):
-    return render(request, "login/admin_panel/certificate.html")
+    webinars=Webinar.objects.all()
+    today=timezone.now().date()
+    
+    return render(request, "login/admin_panel/certificate.html",{
+        'webinars':webinars,
+        'today':today
+    })
 
 def admin_events(request):
     webinar=Webinar.objects.all()
+
+    
+
     return render(request, "login/admin_panel/events.html",{
-        'webinars':webinar
+        'webinars':webinar,
+      
     })
 
 def admin_setting(request):
@@ -220,7 +234,7 @@ def register_user(request):
             messages.error(request,"Email Already Exist")
         else:
             user= User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password)
-            profile=UserProfile.objects.create(user=user.id, school_id=school_id)
+            profile=UserProfile.objects.create(user=user, school_id=school_id)
     return redirect('admin_users')
 
 def generete_authorization_key(request):

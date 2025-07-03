@@ -5,18 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificate Editor</title>
-    <link rel="stylesheet" href="{% static 'css/exam_portal/createCertificate.css' %}">
+    <link rel="stylesheet" href="{% static 'exam_portal/css/createCertificate.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="sidebar">
+       
         <div class="sidebar-header">
+             <p><a href="{% url 'admin_certificate' %}" class="back">Back to Certificate </a></p>
             <h1>Certificate Editor</h1>
         </div>
 
         
         
         <div class="sidebar-section">
+            
             <h2>Upload Certificate Template</h2>
             <p id="changes" style="color:rgb(18, 165, 18); font-weight: 500; display: none;" >
 

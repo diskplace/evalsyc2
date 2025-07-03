@@ -1,130 +1,111 @@
 {% extends "login/layout.html" %}
-
 {% load static %}
 
-{% block title %}<title>Certificate</title>{% endblock %}
+{% block title %}<title>Certificate Management</title>{% endblock %}
 
 {% block css %} 
-<link rel="stylesheet" href="{% static 'css/admin_panel_css/admin_bar.css' %}">
-<link rel="stylesheet" href="{% static 'css/admin_panel_css/Certificate.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/admin_bar.css' %}"> 
+<link rel="stylesheet" href="{% static 'css/admin_panel_css/certificate.css' %}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 {% endblock %}
 
 {% block body%}
-
-
 <div class="topbar d-flex justify-content-end align-items-center px-4 py-3">
-  <div class="topbar-right d-flex align-items-center gap-3">
-      <a href="#" class="notification-icon position-relative">
-          <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
-      </a>
-      <span class="username fw-semibold">{{ user.username }}</span>
-      <a class="profile">
-          <img src="{{ user.user_profile.img.url }}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
-      </a>
-  </div>
+        <div class="topbar-right d-flex align-items-center gap-3">
+        <a href="#" class="notification-icon position-relative">
+            <img class="bell" src="{% static 'icons/bell.png' %}" alt="Notifications" style="width: 24px;">
+        </a>
+        <span class="username fw-semibold">{{ user.username }}</span>
+        <a class="profile">
+            <img src="{{ user.user_profile.img.url }}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%;">
+        </a>
+    </div>
 </div>
+
 <div class="app-container">
-  <aside class="sidebar">
-    <div class="logo">
-      <img src="{% static 'asset/logo1.png' %}" alt="Logo" />
-      <h2>SDO Baliwag</h2>
-    </div>
-    <nav class="nav">
-        <a href="{% url 'admin_events' %}" class="nav-item">Event</a>
-        <a href="{% url 'admin_calendar' %}" class="nav-item">Calendar</a>
-        <a href="{% url 'admin_certificate' %}" class="nav-item active">Certificate</a>
-        <a href="{% url 'admin_users' %}" class="nav-item">Users</a>
-        <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
-    </nav>
-    <div class="logout" >
-      <a href="{% url 'logout' %}">
-        <img   src="{% static 'icons/exit.png' %}" alt="">
-        Logout
-      </a> 
-    </div>
-  </aside>
-
-  <div class="container">
-    <div class="header">
-      <h2>Certificate Management</h2>
-      <button class="generate-btn">+ Generate New Certificate</button>
-    </div>
-
-    <div class="controls">
-      <input type="text" placeholder="Search certificates..." class="search-bar" />
-      <div class="actions">
-        <button class="filter-btn">Filter</button>
-        <button class="export-btn">Export</button>
+    <aside class="sidebar">
+            <div class="logo">
+        <img src="{% static 'asset/logo1.png' %}" alt="Logo" />
+        <h2>SDO Baliwag</h2>
       </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active">All Certificates</button>
-      <button class="tab">Pending</button>
-      <button class="tab">Issued</button>
-      <span class="cert-count">Showing 1–10 of 156 certificates</span>
-    </div>
-
-    <div class="table">
-      <div class="table-head">
-        <div>Speaker</div>
-        <div>Event</div>
-        <div>Issue Date</div>
-        <div>Certificate ID</div>
-        <div>Status</div>
-        <div>Actions</div>
+      <nav class="nav">
+          <a href="{% url 'admin_events' %}" class="nav-item">Event</a>
+          <a href="{% url 'admin_calendar' %}" class="nav-item ">Calendar</a>
+          <a href="{% url 'admin_certificate' %}" class="nav-item active">Certificate</a>
+          <a href="{% url 'admin_users' %}" class="nav-item">Users</a>
+          <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
+      </nav>
+      <div class="logout" >
+        <a href="{% url 'logout' %}">
+          <img   src="{% static 'icons/exit.png' %}" alt="">
+          Logout
+        </a> 
       </div>
-
-      <div class="table-row">
-        <div class="speaker">
-          <div class="avatar"></div>
-          <div class="info">
-            <div class="name">Bronny James</div>
-            <div class="email">jamesbronny23@deped.com</div>
-          </div>
+        
+    </aside>
+    
+    <div class="main-content">
+        <div class="header-container">
+            <h2>Certificate Management</h2>
+            <p class="current-date">Today: {{ today|date:"F j, Y" }}</p>
         </div>
-        <div>Seminar</div>
-        <div>Mar 24, 2025</div>
-        <div>CERT-2025-001</div>
-        <div><span class="badge issued">Issued</span></div>
-        <div class="icons"> 🔽 🗑️</div>
-      </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Webinar</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for webinar in webinars %}
+                    <tr>
+                        <td>{{ webinar.title }}</td>
+                        <td>{{ webinar.start_date|date:"M j, Y" }}</td>
+                        <td>{{ webinar.until_date|date:"M j, Y" }}</td>
+                        <td>
+                          {% if webinar.start_date > today %}
+                              <span class="status-badge status-upcoming">
+                                  <i class="fas fa-clock"></i> Not Started
+                              </span>
+                          {% elif webinar.until_date < today %}
+                              <span class="status-badge status-completed">
+                                  <i class="fas fa-check-circle"></i> Certificates Issued
+                              </span>
+                          {% elif webinar.start_date <= today and webinar.until_date >= today %}
+                              <span class="status-badge status-ongoing">
+                                  <i class="fas fa-spinner fa-pulse"></i> Ongoing
+                              </span>
+                          {% endif %}
 
-      <div class="table-row">
-        <div class="speaker">
-          <div class="avatar"></div>
-          <div class="info">
-            <div class="name">Michael Chan</div>
-            <div class="email">michaelchan123@deped.com</div>
-          </div>
+                        </td>
+                        <td>
+                            <a href="{% url 'create_certificate' webinar.id %}" class="action-link">
+                                <i class="fas fa-edit"></i> Edit Certificate
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 2rem;">
+                            No webinars found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div>Workshop</div>
-        <div>Mar 25, 2025</div>
-        <div>CERT-2025-002</div>
-        <div><span class="badge pending">Pending</span></div>
-        <div class="icons"> 🔽 🗑️</div>
-      </div>
     </div>
-
-    <div class="pagination">
-      <span>Showing 1 to 10 of 156 results</span>
-      <div class="pages">
-        <button class="page">1</button>
-        <button class="page">2</button>
-        <button class="page">3</button>
-        <span>...</span>
-        <button class="page">16</button>
-      </div>
-    </div>
-  </div>
-
-
-
 </div>
 
 <footer>
-  <div class="container d-flex justify-content-between flex-wrap">
+     <div class="container d-flex justify-content-between flex-wrap">
       <div>
           <p>Empowering organizations through effective performance evaluation</p>
       </div>
@@ -135,6 +116,4 @@
       </div>
   </div>
 </footer>
-
-
 {% endblock %}

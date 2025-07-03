@@ -1,0 +1,330 @@
+{% extends "login/layout.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/user_nav/certificate.css' %}">
+<link rel="stylesheet" href="{% static 'css/bar.css' %}"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    /* Preview Container */
+    .certificate-preview-page {
+        padding: 2rem;
+        background-color: #f7fafc;
+        min-height: calc(100vh - 64px);
+    }
+    
+    /* Header Section */
+    .preview-header {
+        background-color: #4f46e5;
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .preview-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Action Buttons */
+    .preview-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+    
+    .preview-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-download-preview {
+        background-color: white;
+        color: #4f46e5;
+        border: none;
+    }
+    
+    .btn-download-preview:hover {
+        background-color: #f5f3ff;
+    }
+    
+    .btn-back-preview {
+        background-color: rgba(255,255,255,0.2);
+        color: white;
+        border: none;
+    }
+    
+    .btn-back-preview:hover {
+        background-color: rgba(255,255,255,0.3);
+    }
+    
+    /* Certificate Display */
+    .certificate-display-area {
+        background-color: white;
+        padding: 2rem;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #certificatePreviewCanvas {
+        max-width: 100%;
+        height: auto;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+
+    .loading-state {
+        padding: 3rem;
+        text-align: center;
+    }
+    
+    .loading-spinner {
+        color: #4f46e5;
+        font-size: 2.5rem;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+ 
+    .certificate-meta {
+        margin-top: 2rem;
+        background-color: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+    
+    .meta-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #2D3748;
+        margin-bottom: 1rem;
+    }
+    
+    .meta-row {
+        display: flex;
+        margin-bottom: 0.75rem;
+    }
+    
+    .meta-label {
+        font-weight: 600;
+        color: #4a5568;
+        width: 180px;
+    }
+    
+    .meta-value {
+        color: #2D3748;
+        flex: 1;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="certificate-preview-page">
+    <div class="preview-container">
+        <!-- Header with title and actions -->
+        <div class="preview-header">
+            <h1 class="preview-title">Certificate Preview</h1>
+            <div class="preview-actions">
+
+                <a href="{% url 'certificate' %}" class="preview-btn btn-back-preview">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+        
+        <!-- Certificate display area -->
+        <div class="certificate-display-area">
+            <div id="loadingState" class="loading-state">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner"></i>
+                </div>
+                <p>Generating certificate preview...</p>
+            </div>
+            <canvas id="certificatePreviewCanvas" style="display: none;"></canvas>
+        </div>
+        
+        <!-- Certificate metadata -->
+        <div class="certificate-meta">
+            <h3 class="meta-title">Certificate Details</h3>
+            <div class="meta-row">
+                <span class="meta-label">Participant Name:</span>
+                <span class="meta-value">{{ user.first_name }} {{ user.last_name }}</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">Webinar Title:</span>
+                <span id="webinarTitleMeta" class="meta-value">{{ certificate.title }}</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">Completion Date:</span>
+                <span id="completionDateMeta" class="meta-value">{{ certificate.date }}</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">Certificate ID:</span>
+                <span id="certificateIdMeta" class="meta-value">{{ webinar.id }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('certificatePreviewCanvas');
+    const ctx = canvas.getContext('2d');
+    const loadingState = document.getElementById('loadingState');
+    
+    // Get certificate data from template variable
+    const certificateData = JSON.parse('{{ certificate|escapejs }}');
+    console.log("Certificate data:", certificateData);
+
+    // Initialize the certificate
+    initCertificate();
+
+    // Set up download button
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+        downloadCertificate();
+    });
+
+    function initCertificate() {
+        drawIMG();
+    }
+
+    function drawIMG() {
+        const img = new Image();
+        img.src = certificateData.img;
+        
+        img.onload = function() {
+            const scaleFactor = 2;
+            const displayWidth = img.width > 900 ? img.width / 2 : img.width;
+            const displayHeight = img.height > 900 ? img.height / 2 : img.height;
+
+            canvas.width = displayWidth * scaleFactor;
+            canvas.height = displayHeight * scaleFactor;
+
+            canvas.style.width = `${displayWidth}px`;
+            canvas.style.height = `${displayHeight}px`;
+
+            ctx.scale(scaleFactor, scaleFactor);
+            ctx.drawImage(img, 0, 0, displayWidth, displayHeight);
+            
+            // Draw text after image loads
+            drawTxt();
+            
+            // Show canvas and hide loading state
+            canvas.style.display = 'block';
+            loadingState.style.display = 'none';
+        };
+
+        img.onerror = function() {
+            loadingState.innerHTML = `
+                <div style="color: #e53e3e;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Error loading certificate image</p>
+                </div>
+            `;
+        };
+    }
+
+    function drawTxt() {
+        const title = certificateData.title;
+        const subtitle = certificateData.subtitle;
+        const name = certificateData.participant;
+        const host = certificateData.host;
+
+        ctx.textAlign = "center";
+        ctx.fillStyle = "black";
+
+        const x = canvas.width / 2 / 2;
+        let y = 240;
+        const spacing = 40;
+        const littlespace = 20;
+
+        ctx.font = "50px Old English Text MT";
+        ctx.fillText(title, x, y);
+        y += spacing;
+
+        ctx.font = "14px 'Bookman Old Style'";
+        ctx.fillText(subtitle, x, y);
+        y += spacing;
+
+        ctx.font = "Bold 29px 'Bookman Old Style'";
+        ctx.fillText(name, x, y);
+        y += littlespace;
+
+        ctx.font = "15px 'Bookman Old Style'";
+        ctx.fillText(host, x, y);
+        y += littlespace;
+
+        drawAllParagraphs(650, y);
+    }
+
+    function drawAllParagraphs(maxWidth, y) {
+        const subject = certificateData.subject;
+        const address = certificateData.address;
+        const date = certificateData.date;
+
+        ctx.textAlign = "center";
+        ctx.fillStyle = "black";
+        ctx.font = "16px 'Bookman Old Style'";
+        y += 10;
+        const x = canvas.width / 2 / 2;
+        const lineHeight = 25;
+
+        function drawParagraphBlock(paragraph, font) {
+            const words = paragraph.split(" ");
+            let line = "";
+            for (let i = 0; i < words.length; i++) {
+                const testLine = line + words[i] + " ";
+                if (ctx.measureText(testLine).width > maxWidth && i > 0) {
+                    ctx.font = `${font} 16px 'Bookman Old Style'`;
+                    ctx.fillText(line, x, y);
+                    line = words[i] + " ";
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, y);
+            y += lineHeight;
+        }
+
+        drawParagraphBlock(subject, "");
+        drawParagraphBlock(address, "italic");
+        drawParagraphBlock(date, 'italic');
+    }
+
+    function downloadCertificate() {
+        const { jsPDF } = window.jspdf;
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
+
+        const pdf = new jsPDF({
+            orientation: orientation,
+            unit: 'px',
+            format: [canvas.width, canvas.height]
+        });
+
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, canvas.width, canvas.height);
+        pdf.save("certificate.pdf");
+    }
+});
+</script>
+{% endblock %}

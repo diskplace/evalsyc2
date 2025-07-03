@@ -1,4 +1,3 @@
-/* Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -158,3 +157,72 @@ body {
 
 }
 
+
+.events-section {
+  position: absolute;
+  right: 0;
+  top: 100px; 
+  width: 200px; 
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  z-index: 2;
+
+}
+
+.events-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #4c43ce;
+  text-align: center;
+  
+}
+
+.event-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  
+}
+
+.event-card {
+  background: #f6f8ff;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #4c43ce;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.05);
+  transition: all 0.2s ease;
+
+}
+
+.event-card:hover {
+  transform: translateX(5px);
+  background-color: #eef2ff;
+}
+
+.event-card h6 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: #252525;
+}
+
+.event-card .address {
+  font-size: 13px;
+  color: #555;
+  margin: 0 0 5px 0;
+}
+
+.event-card .date {
+  font-size: 12px;
+  color: #7a7a7a;
+}
+
+.no-event {
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+}

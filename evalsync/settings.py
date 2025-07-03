@@ -43,17 +43,21 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),]
 
 
+import rest_framework
+
 # Application definition
 
 INSTALLED_APPS = [
     'login',
     'webinar',
     'exam_portal',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django_cleanup.apps.CleanupConfig',
     'django.contrib.staticfiles',
 ]
 

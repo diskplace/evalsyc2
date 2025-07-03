@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Webinar,WebinarAttendees,ResponseQuestionaire,Speaker,Test_Question,TestResponse,Choice
+from .models import Webinar,WebinarAttendees,ResponseQuestionaire,Speaker,Test_Question,TestResponse,Choice, Comment
 from django.db.models import Avg,F
 from django.core.mail import send_mail
 from django.conf import settings
@@ -164,44 +164,86 @@ def questionaire(request, id):
     "manage": manage}
 
     if request.method=='POST':
+        sex=request.POST.get('sex')
+        school_id=request.POST.get('school_id')
+        try:
+            userprofile=UserProfile.objects.get(school_id=school_id)
 
-        for key, value in request.POST.items():
+            if request.POST.get('comment'):
+                Comment.objects.create(
+                    webinar=webinar,
+                    user=userprofile.user,
+                    text= request.POST.get('comment')
+                )
 
-            if key.startwith('speaker'):
-                speaker.append(value)
-            elif key.startwith('venue'):
-                venue.append(value)
-            elif key.startwith('meals'):
-                meals.append(value)
-            elif key.startwith("manage"):
-                manage.append(value)
             
-        for catergory , reponses in all_responses:
-            ResponseQuestionaire.objects.create(
-                webinar=webinar,
-                user=request.user,
-                type=catergory,
-                q1=reponses[0],
-                q2=reponses[1],
-                q3=reponses[2],
-                q4=reponses[3],
-                q5=reponses[4],
 
-            )
-        return redirect(webinar_detail, webinar.id)
+            for key, value in request.POST.items():
+
+                if key.startswith('speaker'):
+                    speaker.append(value)
+                elif key.startswith('venue'):
+                    venue.append(value)
+                elif key.startswith('meals'):
+                    meals.append(value)
+                elif key.startswith("manage"):
+                    manage.append(value)
+                
+            for catergory , response in all_responses.items():
+                if len(response) <5:
+                    response.append(None)
+
+                ResponseQuestionaire.objects.create(
+                        webinar=webinar,
+                        user=request.user,
+                        type=catergory,
+                        q1=response[0],
+                        q2=response[1],
+                        q3=response[2],
+                        q4=response[3],
+                        q5=response[4],
+
+                    )
+          
+
+            return redirect("index")
+
+        except UserProfile.DoesNotExist:
+            error_message="Invalid id please recheck your Deped id"
+            if webinar.event_type == 'recognition':
+                return render(request,'webinar/evaluation/recognition.html',{
+                'webinar':webinar,
+                'error_message':error_message
+            })
+
+            elif webinar.event_type == 'seminar':
+                return render(request,'webinar/evaluation/seminar.html',{
+                'webinar':webinar,
+                'error_message':error_message
+
+            })
+
+            return render(request,'webinar/evaluation/workshop.html',{
+                'webinar':webinar,
+                'error_message':error_message
+            })
+            
+
     if webinar.event_type == 'recognition':
         return render(request,'webinar/evaluation/recognition.html',{
-        'webinar':webinar
-    })
+            'webinar':webinar
+        })
 
     elif webinar.event_type == 'seminar':
         return render(request,'webinar/evaluation/seminar.html',{
-        'webinar':webinar
-    })
+            'webinar':webinar
+        })
 
     return render(request,'webinar/evaluation/workshop.html',{
         'webinar':webinar
-    })
+        })
+
+
 
 def create_test(request, id):
     webinar = get_object_or_404(Webinar, id=id)

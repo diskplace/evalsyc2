@@ -27,14 +27,14 @@ class Speaker(models.Model):
 
 
 class WebinarAttendees(models.Model):
-    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, related_name="attendess")
+    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, related_name="attendees")
     user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="attendees", null=True, blank=True)
     school_id=models.CharField(max_length=20, null=True)
     email=models.EmailField()
 
 
 class ResponseQuestionaire(models.Model):
-      webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE)
+      webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, related_name="evaluation")
       user=models.ForeignKey(User, on_delete=models.CASCADE)
       type=models.CharField(max_length=100, null=True, blank=True)
       q1=models.IntegerField(null=True)
@@ -43,6 +43,12 @@ class ResponseQuestionaire(models.Model):
       q4=models.IntegerField(null=True)
       q5=models.IntegerField(null=True)
       q6=models.IntegerField(null=True)
+
+
+class Comment(models.Model):
+    Webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, related_name="comment")
+    user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment")
+    text=models.TextField()
 
 
 class Test_Question(models.Model):

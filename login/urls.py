@@ -21,6 +21,7 @@ urlpatterns=[
     path("evaluation_nav", views.evaluation_nav, name="evaluation_nav"),
     path("attendance", views.attendance, name="attendance"),
     path("certificate", views.certificate, name="certificate"),
+    path("certificate_data/<int:id>/", views.certificate_data, name="certificate_data"),
     path("aboutus", views.aboutus, name="aboutus"),
     path("user_setting", views.user_setting, name="user_setting"),
 

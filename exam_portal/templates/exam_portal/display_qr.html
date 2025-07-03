@@ -1,22 +1,21 @@
 {% extends "login/layout.html" %}
 
 {% load static %}
-{% block css %} <link rel="stylesheet" href="{% static 'css/evaluation.css' %}"> {% endblock %}
+{% block css %} 
+<link rel="stylesheet" href="{% static 'exam_portal/css/display_qr.css' %}">
+
+{% endblock %}
+
 {% block body %}
 
-<div class='container'>
-
-    <div>{{ qr.img.url }}
+<div class="qr-page">
+    <p class="qr-message">Scan this QR code to begin your test</p>
     
+    <div class="qr-code-wrapper">
+        <img class="qr-code" src="{{ qr.img.url }}" alt="Test QR Code">
     </div>
-
-    <img src="{{ qr.img.url }}" alt="" srcset="">
-
-
-</div>
-
-
     
-
+    <p class="qr-instruction">Point your camera at the QR code</p>
+</div>
 
 {% endblock %}
