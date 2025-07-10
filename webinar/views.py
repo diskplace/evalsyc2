@@ -94,13 +94,13 @@ def register(request, id):
             messages.error(request, "School ID not found.")
             return redirect('register', id=webinar.id)
 
-        already_registered = WebinarAttendees.objects.filter(webinar=webinar, user=user).exists()
+        already_registered = WebinarAttendees.objects.filter(webinar=webinar, user=user.user).exists()
 
         if already_registered:
             messages.warning(request, "You are already registered for this webinar.")
             return redirect('register', id=webinar.id)
 
-        attendee = WebinarAttendees(webinar=webinar, user=user, school_id=school_id, email=email)
+        attendee = WebinarAttendees(webinar=webinar, user=user.user, school_id=school_id, email=email)
         attendee.save()
 
         subject = f"Registration Confirmed: {webinar.title}"
@@ -375,39 +375,43 @@ def delete_question(request, id):
 
 
 def record_test(request, id, type):
-    webinar=Webinar.objects.get(id=id)
-    question=webinar.question.filter(test_type=type)
+    webinar = Webinar.objects.get(id=id)
+    questions = webinar.question.filter(test_type=type)
 
-    if request.method=='POST':
-        userinputs=request.POST.key()
-        for userinput in userinputs:
-            correct=False
-            if re.findall( "user_input_",userinput):
-                input_id=userinput
-                q_id=re.findall(r'\d+',input_id)[0]
-                output_value=request.POST.get(f"user_input_{q_id}")
+    if request.method == 'POST':
+        school_id = request.POST.get("school_id")
+    
+        try:
+            profile = UserProfile.objects.get(school_id=school_id)
+            user = profile.user
+
+            if not webinar.attendees.filter(user=user).exists():
+                return redirect("webinar_detail", id)
             
-                try:
-                    question=Test_Question.objects.get(id=q_id)
+            responses = []
+            for key, value in request.POST.items():
+                if key.startswith('user_input_'):
+                    q_id = key.split('_')[-1]  
+                    try:
+                        question = Test_Question.objects.get(id=q_id)
+
                     
+                        responses.append(TestResponse(
+                            user=user,
+                            question=question,
+                            user_input=value,
+                           
+                        ))
+
+                    except Test_Question.DoesNotExist:
+                        continue  
+
+            if responses:
+                TestResponse.objects.bulk_create(responses)
+            return redirect("test_result", webinar.id, type, user.id)
+        except UserProfile.DoesNotExist:
+            return redirect("display_test", id, type)
         
-                    if question.correct_answered==output_value:
-                        correct=True
-                    else:
-                        correct=False
-                        store_result=TestResponse.objects.create(
-                                user=request.user,
-                                question=question,
-                                user_input=output_value,
-                                is_correct=correct)                 
 
-                except Test_Question.DoesNotExist:
-                    mc_option=Choice.objects.get(id=output_value)
-                    if mc_option.is_correct:
-                        correct=True
-
-                    store_result=TestResponse.objects.create(
-                            user=request.user,
-                            question=mc_option.question,
-                            user_input=output_value,
-                            is_correct=correct)
+        
+    return redirect("test_result", webinar.id, type, user.id)

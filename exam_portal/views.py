@@ -1,33 +1,50 @@
 from django.shortcuts import render
-from webinar.models import Test_Question, TestResponse, ResponseQuestionaire,Webinar,WebinarAttendees
+from webinar.models import Test_Question, TestResponse, ResponseQuestionaire,Webinar,WebinarAttendees,Choice
 from .models import TestResult,TestQR, CertificateTemplate, EvalQR
 from django.shortcuts import redirect, get_object_or_404
 import json
 from django.core.files.base import ContentFile
+from django.http import JsonResponse
 from .serializer import CertificateSerilize
 import qrcode
+from collections import Counter
 from io import BytesIO
+from django.contrib.auth.models import User
 
 
-# Create your views here.
 
-def test_result(request, id, type):
-    test_reponse=TestResponse.objects.get(id=id)
-    webinar=test_reponse.question.webinar
-    tests=webinar.question.filter(test_type=type)
 
-    for test in tests:
-        responses=test.test_reponse
-        if responses.is_correct:
-            score+=1
-        TestResult.objects.create(
-            webinar=webinar,
-            user=responses.user,
-            test=test_reponse.id,
-            type=test_reponse.question.test_type,
-            score=score
-            )
-        return redirect("index")
+
+def test_result(request, web_id, type, id):
+    webinar=get_object_or_404(Webinar, id=web_id)
+    user=get_object_or_404(User, id=id)
+    test_responses = TestResponse.objects.filter(
+        user=id,
+        question__webinar=webinar,
+        question__test_type=type
+    )
+    score = 0
+    for response in test_responses:
+        question = response.question
+        correct = question.correct_answered
+        if question.question_type == 'MC':
+            try:
+                selected_choice = Choice.objects.get(id=response.user_input)
+                if selected_choice.is_correct:
+                    score += 1
+            except Choice.DoesNotExist:
+                continue
+        else:
+            if response.user_input == correct:
+                score += 1
+    TestResult.objects.create(
+        webinar=webinar,
+        user=user,
+        test=type,
+        score=score
+    )
+    return redirect("index")
+
 
 def display_result(request, id):
     webinar=Webinar.objects.get(id=id)
@@ -38,28 +55,106 @@ def display_result(request, id):
     pre_test_result=[]
     post_test_result=[]
 
-    result={
-        'evaluation_resonses':evaluation_responses,
-        'pre_test_result':pre_test_result,
-        'post_test_result':post_test_result
-    }
-
-    for evaluation in evaluations:
-        total=evaluation.q1+evaluation.q2+evaluation.q3+ evaluation.q4+evaluation.q5
-        evaluation_responses.append(total)
-
-
-    for test_result in test_results:
-        if test_result.type=='pre_test':
-            pre_test_result.append(test_result.score)
-        else:
-            post_test_result.append(test_result.score)
-
 
     return render(request, 'exam_portal/statistics.html',{
-        'result':result
+        'webinar':webinar
+       
     })
 
+
+def rounded_data(request, id):
+    webinar = get_object_or_404(Webinar, id=id)
+
+    speaker = []
+    venue = []
+    meal = []
+    manage = []
+
+    for evaluation in webinar.evaluation.all():
+        total = [evaluation.q1, evaluation.q2, evaluation.q3, evaluation.q4, evaluation.q5, evaluation.q6]
+        valid_number = [s for s in total if s is not None]
+        average = sum(valid_number) / len(valid_number) if valid_number else 0
+        average = round(average)
+
+        if evaluation.type == 'speaker':
+            speaker.append(average)
+        elif evaluation.type == 'venue':
+            venue.append(average)
+        elif evaluation.type == 'meals': 
+            meal.append(average)
+        elif evaluation.type == 'manage':
+            manage.append(average)
+
+  
+    speaker_counter = Counter(speaker)
+    venue_counter = Counter(venue)
+    meal_counter = Counter(meal)
+    manage_counter = Counter(manage)
+
+ 
+    overall = speaker + venue + meal + manage
+    overall_counter = Counter(overall)
+
+    evaluations = {
+        "speaker": [speaker_counter.get(5,0), speaker_counter.get(4,0), speaker_counter.get(3,0), speaker_counter.get(2,0), speaker_counter.get(1,0)],
+        "venue":   [venue_counter.get(5,0), venue_counter.get(4,0), venue_counter.get(3,0), venue_counter.get(2,0), venue_counter.get(1,0)],
+        "meal":    [meal_counter.get(5,0), meal_counter.get(4,0), meal_counter.get(3,0), meal_counter.get(2,0), meal_counter.get(1,0)],
+        "manage":  [manage_counter.get(5,0), manage_counter.get(4,0), manage_counter.get(3,0), manage_counter.get(2,0), manage_counter.get(1,0)],
+        "overall": [overall_counter.get(5,0), overall_counter.get(4,0), overall_counter.get(3,0), overall_counter.get(2,0), overall_counter.get(1,0)]
+    }
+
+    return JsonResponse(evaluations)
+
+
+def result_data(request, id):
+    webinar = get_object_or_404(Webinar, id=id)
+
+    speaker = []
+    venue = []
+    meal = []
+    manage = []
+
+    for evaluation in webinar.evaluation.all():
+        total = [evaluation.q1, evaluation.q2, evaluation.q3, evaluation.q4, evaluation.q5, evaluation.q6]
+        valid_number = [s for s in total if s is not None]
+        average = sum(valid_number) / len(valid_number) if valid_number else 0
+
+        if evaluation.type == 'speaker':
+            speaker.append(average)
+        elif evaluation.type == 'venue':
+            venue.append(average)
+        elif evaluation.type == 'meals':
+            meal.append(average)
+        elif evaluation.type == 'manage':
+            manage.append(average)
+
+
+    overall = speaker + venue + meal + manage
+
+    evaluations = {
+        "speaker": speaker,
+        "venue": venue,
+        "meal": meal,
+        "manage": manage,
+        "overall": overall
+    }
+
+    return JsonResponse(evaluations)
+
+
+def test_data(request, id):
+    webinar=get_object_or_404(Webinar, id=id)
+    test_result=[]
+    results=webinar.test_result.all()
+    for result in results:
+        test_result.append({
+            "id":result.id,
+            "user":result.user.email,
+            "test_type":result.test,
+            "score":result.score
+        })
+    
+    return JsonResponse({"test_result":test_result})
 def generate_qr(request, id, type):
     url = 'http://127.0.0.1:8000'
     

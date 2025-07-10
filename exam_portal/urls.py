@@ -2,7 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('result/<int:id>/',views.display_result, name='display_result'), 
+    path('test_result/<int:web_id>/<str:type>/<int:id>/',views.test_result, name='test_result'), 
+    path("result_data/<int:id>/", views.result_data, name="result_data"),
+    path("rounded_data/<int:id>/", views.rounded_data, name="rounded_data"),
     path("display_result/<int:id>/", views.display_result , name="display_result"),
     path("generate_qr/<int:id>/<str:type>/", views.generate_qr , name="generate_qr"),
     path("qr_evalution/<int:id>/", views.qr_evalution, name="qr_evalution"),

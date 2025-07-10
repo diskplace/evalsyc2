@@ -7,6 +7,7 @@ urlpatterns=[
     path("register/<int:id>/", views.register, name="register"),
     
     path("questionaire/<int:id>/", views.questionaire, name="questionaire"),
+    path("record_test/<int:id>/<str:type>/", views.record_test, name="record_test"),
 
 
     path('create_test/<int:id>/', views.create_test, name="create_test"),

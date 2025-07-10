@@ -1,20 +1,269 @@
 {% extends "login/layout.html" %}
 
 {% load static %}
-{% block css %} <link rel="stylesheet" href="{% static 'css/evaluation.css' %}"> {% endblock %}
+{% block css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'exam_portal/css/statistics.css' %}">
+{% endblock %}
+
 {% block body %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class='container'>
-
-    <div>
-        {{ result }}
+<div class="app">
+    <div class="sidebar">
+        <aside>
+            <div class="title-container">
+                <p class="webinar-detail">
+                    <a href="{% url 'webinar_detail' webinar.id %}">Webinar detail</a> > Statistic
+                </p>
+                <h2>{{ webinar.title }}</h2>
+                <p class="stat">Statistic and Result</p>
+            </div>
+        </aside>
     </div>
 
+    <div class="main-content">
+        <h2 class="title head">Statistic Management</h2>
+        <section class="head-section">
+            <div class="card">
+                <div class="text-content">
+                    <p class="label">Attendance</p>
+                    <p class="number">50</p>
+                </div>
+                <div class="icon-wrapper">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="text-content">
+                    <p class="label">Attendance</p>
+                    <p class="number">50</p>
+                </div>
+                <div class="icon-wrapper">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="text-content">
+                    <p class="label">Attendance</p>
+                    <p class="number">50</p>
+                </div>
+                <div class="icon-wrapper">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            </div>
+        </section>
 
+        <section class="evaluation-section">
+            <h2 class="title">Evaluation result</h2>
+            <div class="evaluation-container">
+                <div class="chart-wrapper">
+                    <canvas id="speaker" class="chart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="venue" class="chart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="food" class="chart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="manage" class="chart"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="overall" class="chart"></canvas>
+                </div>
+            </div>
+            <button onclick="DownloadExcel()">Download Evaluation Data</button>
+
+        </section>
+<section class="test-section">
+    <h2 class="title">Test Results</h2>
+
+    <div class="test-data-container">
+        <!-- Pre-test Table -->
+        <div class="test-table-container">
+            <h3>Pre-Test Results</h3>
+            <div class="table-responsive">
+                <table class="test-data-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Email</th>
+                            <th>Time Submitted</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Time Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>user1@school.edu</td>
+                            <td>2023-11-15 09:23:42</td>
+                            <td>85%</td>
+                            <td><span class="completed">Completed</span></td>
+                            <td>23 min</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>user2@school.edu</td>
+                            <td>2023-11-15 10:15:03</td>
+                            <td>92%</td>
+                            <td><span class="completed">Completed</span></td>
+                            <td>18 min</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>user3@school.edu</td>
+                            <td>-</td>
+                            <td>45%</td>
+                            <td><span class="incomplete">In Progress</span></td>
+                            <td>12 min</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>user4@school.edu</td>
+                            <td>2023-11-16 14:42:19</td>
+                            <td>78%</td>
+                            <td><span class="completed">Completed</span></td>
+                            <td>27 min</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+</section>
+
+
+
+
+   
+</div>
 </div>
 
-
+<script>
     
+    async function DownloadExcel() {
+        const id = parseInt("{{ webinar.id }}");
+        const response = await fetch(`/exam_portal/result_data/${id}`);
+        const data = await response.json();
+
+        console.log("Data fetched:", data);
+
+        // Convert data to CSV
+        let csv = "Category,5 (Excellent),4 (Good),3 (Average),2 (Poor),1 (Very Poor)\n";
+        csv += `Speaker,${data.speaker.join(",")}\n`;
+        csv += `Venue,${data.venue.join(",")}\n`;
+        csv += `Meal,${data.meal.join(",")}\n`;
+        csv += `Manage,${data.manage.join(",")}\n`;
+
+        if (data.overall) {
+            csv += `Overall,${data.overall.join(",")}\n`;
+        }
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `evaluation_data_${id}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        console.log("Download triggered!");
+    }
+document.addEventListener('DOMContentLoaded', function() {
+
+    async function fetchData(){
+    const id=parseInt("{{ webinar.id }}");
+
+    const evaluation= await fetch(`/exam_portal/rounded_data/${id}`)
+
+    const data=await evaluation.json()
+
+    console.log(data)
+    console.log("hello")
+    
+
+
+
+    const chartData = {
+        speaker: data.speaker,
+        venue: data.venue,
+        food: data.meal,
+        manage: data.manage,
+        overall: data.overall
+    };
+    
+    const labels = ['5 (Excellent)', '4 (Good)', '3 (Average)', '2 (Poor)', '1 (Very Poor)'];
+    const colors = ['#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#F44336'];
+    
+    const chartIds = ['speaker', 'venue', 'food', 'manage', 'overall'];
+    
+    chartIds.forEach(id => {
+        const ctx = document.getElementById(id).getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: chartData[id],
+                    backgroundColor: colors,
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: id.charAt(0).toUpperCase() + id.slice(1) + ' Evaluation',
+                        font: {
+                            size: 14
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+    }
+    fetchData()
+
+
+
+});
+</script>
 
 
 {% endblock %}

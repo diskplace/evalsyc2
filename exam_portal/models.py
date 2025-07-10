@@ -5,10 +5,10 @@ from webinar.models import ResponseQuestionaire, TestResponse, Webinar,Test_Ques
 # Create your models here.
 
 class TestResult(models.Model):
-    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, blank=True, null=True)
+    webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, blank=True, null=True, related_name="test_result")
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     test=models.CharField(max_length=50)
-    type=models.CharField(max_length=50)
+
     score=models.IntegerField()
 
 

@@ -10,16 +10,24 @@
         <h2>Teachers' Professional Development & Training</h2>
         <p class="author">SGOD Chief, Irene L. Elizalde</p>
         <p class="date">April 1, 2025</p>
-        <div class="divider"></div>
-        
-        <div class="participant-info">
-            <p><strong>Team/Training Title</strong></p>
+        <div class="divider">
 
-            <p>relevant.yamzlg@speed.gov.pk</p>
-            <p><strong>Position</strong></p>
-            <p>Teacher</p>
+
         </div>
+        {% if user.is_staff or user.is_superuser %}
+            <div class="qr-generator-container">
+                <a href="{% url 'qr_evalution' webinar.id %}" class="generate-qr-btn">
+                <span class="btn-icon">⎙</span>
+                Generate QR Code
+                </a>
+            </div>
+        {% endif  %}
+   
+        
+
     </div>
+
+    
 
     <form action="{% url 'questionaire' webinar.id %}" method="post">
         {% csrf_token %}
@@ -38,184 +46,197 @@
         <div class="evaluation-section">
             <h3> Evaluation</h3>
             <h4>Questions</h4>
+
+            {% if error_message %}
+                <h4 style="color:red">{{ error_message }}</h4>
+            {% endif %}
+        <table class="info-table">
+            <tr >
+                <td class="schoolid-label">School Id: <input type="text" name="school_id"></td>
+                <td><p class="sex-label">Sex: 
+                <label><input type="radio" name="sex" value="male"> Male</label>
+                <label><input type="radio" name="sex" value="female"> Female</label>
+                </p></td>
+
+            </tr>
+        </table>   
             
         <table class="rating-table">
-            <tr><td><h2>Verification</h2></td></tr>
-            <tr>
-                <td>
-                    <p class="info-line">Sex: 
-                    <label><input type="radio" name="sex" value="male"> Male</label>
-                    <label><input type="radio" name="sex" value="female"> Female</label>
-                    </p>
-                </td>
 
-                <td>School id :
-                    <input type="text" name="school_id">
-
-                </td>
-            </tr>
-
+  
 
      
-            <tr><h2>Speaker</h2></tr>
+            <tr>
+                <td><h2>Speaker</h2></td>
+                <td>5</td>
+                <td>4</td>
+                <td>3</td>
+                <td>2</td>
+                <td>1</td>
+            
+                
+            </tr>
             <tr>
                 <td>1. Knowledge of subject matter</td>
-                <td><input type="radio" name="speaker_q1" value="5"> 5</td>
-                <td><input type="radio" name="speaker_q1" value="4"> 4</td>
-                <td><input type="radio" name="speaker_q1" value="3"> 3</td>
-                <td><input type="radio" name="speaker_q1" value="2"> 2</td>
-                <td><input type="radio" name="speaker_q1" value="1"> 1</td>
+                <td><input type="radio" name="speaker_q1" value="5"></td>
+                <td><input type="radio" name="speaker_q1" value="4"></td>
+                <td><input type="radio" name="speaker_q1" value="3"></td>
+                <td><input type="radio" name="speaker_q1" value="2"></td>
+                <td><input type="radio" name="speaker_q1" value="1"></td>
             </tr>
             <tr>
                 <td>2. Clarity of presentation</td>
-                <td><input type="radio" name="speaker_q2" value="5"> 5</td>
-                <td><input type="radio" name="speaker_q2" value="4"> 4</td>
-                <td><input type="radio" name="speaker_q2" value="3"> 3</td>
-                <td><input type="radio" name="speaker_q2" value="2"> 2</td>
-                <td><input type="radio" name="speaker_q2" value="1"> 1</td>
+                <td><input type="radio" name="speaker_q2" value="5"></td>
+                <td><input type="radio" name="speaker_q2" value="4"> </td>
+                <td><input type="radio" name="speaker_q2" value="3"> </td>
+                <td><input type="radio" name="speaker_q2" value="2"> </td>
+                <td><input type="radio" name="speaker_q2" value="1"> </td>
             </tr>
             <tr>
                 <td>3. Reponsiveness to questions</td>
-                <td><input type="radio" name="speaker_q3" value="1"> 1</td>
-                <td><input type="radio" name="speaker_q3" value="2"> 2</td>
-                <td><input type="radio" name="speaker_q3" value="3"> 3</td>
-                <td><input type="radio" name="speaker_q3" value="4"> 4</td>
-                <td><input type="radio" name="speaker_q3" value="5"> 5</td>
+                <td><input type="radio" name="speaker_q3" value="5"> </td>
+                <td><input type="radio" name="speaker_q3" value="4"> </td>
+                <td><input type="radio" name="speaker_q3" value="3"> </td>
+                <td><input type="radio" name="speaker_q3" value="2"> </td>
+                <td><input type="radio" name="speaker_q3" value="1"> </td>
             </tr>
             <tr>
                 <td>4. Engagement with audience</td>
-                <td><input type="radio" name="speaker_q4" value="1"> 1</td>
-                <td><input type="radio" name="speaker_q4" value="2"> 2</td>
-                <td><input type="radio" name="speaker_q4" value="3"> 3</td>
-                <td><input type="radio" name="speaker_q4" value="4"> 4</td>
-                <td><input type="radio" name="speaker_q4" value="5"> 5</td>
+                <td><input type="radio" name="speaker_q4" value="5"> </td>
+                <td><input type="radio" name="speaker_q4" value="4"> </td>
+                <td><input type="radio" name="speaker_q4" value="3"> </td>
+                <td><input type="radio" name="speaker_q4" value="2"> </td>
+                <td><input type="radio" name="speaker_q4" value="1"> </td>
             </tr>
             <tr>
                 <td>5. The  manage time effectively</td>
-                <td><input type="radio" name="speaker_q5" value="1"> 1</td>
-                <td><input type="radio" name="speaker_q5" value="2"> 2</td>
-                <td><input type="radio" name="speaker_q5" value="3"> 3</td>
-                <td><input type="radio" name="speaker_q5" value="4"> 4</td>
-                <td><input type="radio" name="speaker_q5" value="5"> 5</td>
+                <td><input type="radio" name="speaker_q5" value="5"> </td>
+                <td><input type="radio" name="speaker_q5" value="4"> </td>
+                <td><input type="radio" name="speaker_q5" value="3"> </td>
+                <td><input type="radio" name="speaker_q5" value="2"></td>
+                <td><input type="radio" name="speaker_q5" value="1"> </td>
             </tr>
-            <!-- Venue Evaluation -->
-            <tr><h2>Venue Evaluation</h2></tr>
+           
+            <tr><td><h2>Venue Evaluation</h2></td></tr>
             <tr>
                 <td>1. Comfort and seating arrangement</td>
-                <td><input type="radio" name="venue_q1" value="1"> 1</td>
-                <td><input type="radio" name="venue_q1" value="2"> 2</td>
-                <td><input type="radio" name="venue_q1" value="3"> 3</td>
-                <td><input type="radio" name="venue_q1" value="4"> 4</td>
-                <td><input type="radio" name="venue_q1" value="5"> 5</td>
+                <td><input type="radio" name="venue_q1" value="5"> </td>
+                <td><input type="radio" name="venue_q1" value="4"> </td>
+                <td><input type="radio" name="venue_q1" value="3"> </td>
+                <td><input type="radio" name="venue_q1" value="2"> </td>
+                <td><input type="radio" name="venue_q1" value="1"> </td>
             </tr>
             <tr>
                 <td>2. Room temperature</td>
-                <td><input type="radio" name="venue_q2" value="1"> 1</td>
-                <td><input type="radio" name="venue_q2" value="2"> 2</td>
-                <td><input type="radio" name="venue_q2" value="3"> 3</td>
-                <td><input type="radio" name="venue_q2" value="4"> 4</td>
-                <td><input type="radio" name="venue_q2" value="5"> 5</td>
+                <td><input type="radio" name="venue_q2" value="5"></td>
+                <td><input type="radio" name="venue_q2" value="4"> </td>
+                <td><input type="radio" name="venue_q2" value="3"> </td>
+                <td><input type="radio" name="venue_q2" value="2"> </td>
+                <td><input type="radio" name="venue_q2" value="1"> </td>
             </tr>
             <tr>
                 <td>3. Lighting conditions</td>
-                <td><input type="radio" name="venue_q3" value="1"> 1</td>
-                <td><input type="radio" name="venue_q3" value="2"> 2</td>
-                <td><input type="radio" name="venue_q3" value="3"> 3</td>
-                <td><input type="radio" name="venue_q3" value="4"> 4</td>
-                <td><input type="radio" name="venue_q3" value="5"> 5</td>
+                <td><input type="radio" name="venue_q3" value="5"> </td>
+                <td><input type="radio" name="venue_q3" value="4"> </td>
+                <td><input type="radio" name="venue_q3" value="3"> </td>
+                <td><input type="radio" name="venue_q3" value="2"> </td>
+                <td><input type="radio" name="venue_q3" value="1"> </td>
             </tr>
             <tr>
                 <td>4. Audio/visual equipment</td>
-                <td><input type="radio" name="venue_q4" value="1"> 1</td>
-                <td><input type="radio" name="venue_q4" value="2"> 2</td>
-                <td><input type="radio" name="venue_q4" value="3"> 3</td>
-                <td><input type="radio" name="venue_q4" value="4"> 4</td>
-                <td><input type="radio" name="venue_q4" value="5"> 5</td>
+                <td><input type="radio" name="venue_q4" value="5"> </td>
+                <td><input type="radio" name="venue_q4" value="4"> </td>
+                <td><input type="radio" name="venue_q4" value="3"> </td>
+                <td><input type="radio" name="venue_q4" value="2"> </td>
+                <td><input type="radio" name="venue_q4" value="1"> </td>
             </tr>
             <tr>
                 <td>5. Cleanliness</td>
-                <td><input type="radio" name="venue_q5" value="1"> 1</td>
-                <td><input type="radio" name="venue_q5" value="2"> 2</td>
-                <td><input type="radio" name="venue_q5" value="3"> 3</td>
-                <td><input type="radio" name="venue_q5" value="4"> 4</td>
-                <td><input type="radio" name="venue_q5" value="5"> 5</td>
+                <td><input type="radio" name="venue_q5" value="5"> </td>
+                <td><input type="radio" name="venue_q5" value="4"> </td>
+                <td><input type="radio" name="venue_q5" value="3"> </td>
+                <td><input type="radio" name="venue_q5" value="4"> </td>
+                <td><input type="radio" name="venue_q5" value="5"> </td>
             </tr>
 
             <!-- Meals -->
-            <h2>Meals</h2>
+            <tr>
+                <td><h2>Meals</h2></td>
+                
+            </tr>
             <tr>
                 <td>1. Quality of food provided</td>
-                <td><input type="radio" name="meals_q1" value="1"> 1</td>
-                <td><input type="radio" name="meals_q1" value="2"> 2</td>
-                <td><input type="radio" name="meals_q1" value="3"> 3</td>
-                <td><input type="radio" name="meals_q1" value="4"> 4</td>
-                <td><input type="radio" name="meals_q1" value="5"> 5</td>
+                <td><input type="radio" name="meals_q1" value="5"> </td>
+                <td><input type="radio" name="meals_q1" value="4"> </td>
+                <td><input type="radio" name="meals_q1" value="3"> </td>
+                <td><input type="radio" name="meals_q1" value="2"> </td>
+                <td><input type="radio" name="meals_q1" value="1"> </td>
             </tr>
             <tr>
                 <td>2. Variety of food options</td>
-                <td><input type="radio" name="meals_q2" value="1"> 1</td>
-                <td><input type="radio" name="meals_q2" value="2"> 2</td>
-                <td><input type="radio" name="meals_q2" value="3"> 3</td>
-                <td><input type="radio" name="meals_q2" value="4"> 4</td>
-                <td><input type="radio" name="meals_q2" value="5"> 5</td>
+                <td><input type="radio" name="meals_q2" value="5"> </td>
+                <td><input type="radio" name="meals_q2" value="4"> </td>
+                <td><input type="radio" name="meals_q2" value="3"> </td>
+                <td><input type="radio" name="meals_q2" value="2"> </td>
+                <td><input type="radio" name="meals_q2" value="1"></td>
             </tr>
             <tr>
                 <td>3. Service</td>
-                <td><input type="radio" name="meals_q3" value="1"> 1</td>
-                <td><input type="radio" name="meals_q3" value="2"> 2</td>
-                <td><input type="radio" name="meals_q3" value="3"> 3</td>
-                <td><input type="radio" name="meals_q3" value="4"> 4</td>
-                <td><input type="radio" name="meals_q3" value="5"> 5</td>
+                <td><input type="radio" name="meals_q3" value="5"> </td>
+                <td><input type="radio" name="meals_q3" value="4"> </td>
+                <td><input type="radio" name="meals_q3" value="3"> </td>
+                <td><input type="radio" name="meals_q3" value="2"> </td>
+                <td><input type="radio" name="meals_q3" value="1"> </td>
             </tr>
             <tr>
                 <td>4. Timeliness of meal service</td>
-                <td><input type="radio" name="meals_q4" value="1"> 1</td>
-                <td><input type="radio" name="meals_q4" value="2"> 2</td>
-                <td><input type="radio" name="meals_q4" value="3"> 3</td>
-                <td><input type="radio" name="meals_q4" value="4"> 4</td>
-                <td><input type="radio" name="meals_q4" value="5"> 5</td>
+                <td><input type="radio" name="meals_q4" value="5"> </td>
+                <td><input type="radio" name="meals_q4" value="4"> </td>
+                <td><input type="radio" name="meals_q4" value="3"> </td>
+                <td><input type="radio" name="meals_q4" value="2"> </td>
+                <td><input type="radio" name="meals_q4" value="1"> </td>
             </tr>
 
-            <tr><h2>Management</h2></tr>
+            <tr><td><h2>Management</h2></td></tr>
             <tr>
                 <td>1. Responsiveness to participant needs</td>
-                <td><input type="radio" name="manage_q1" value="1"> 1</td>
-                <td><input type="radio" name="manage_q1" value="2"> 2</td>
-                <td><input type="radio" name="manage_q1" value="3"> 3</td>
-                <td><input type="radio" name="manage_q1" value="4"> 4</td>
-                <td><input type="radio" name="manage_q1" value="5"> 5</td>
+                <td><input type="radio" name="manage_q1" value="5"></td>
+                <td><input type="radio" name="manage_q1" value="4"> </td>
+                <td><input type="radio" name="manage_q1" value="3"> </td>
+                <td><input type="radio" name="manage_q1" value="2"> </td>
+                <td><input type="radio" name="manage_q1" value="1"> </td>
             </tr>
             <tr>
                 <td>2. Efficiency in managing the program</td>
-                <td><input type="radio" name="manage_q2" value="1"> 1</td>
-                <td><input type="radio" name="manage_q2" value="2"> 2</td>
-                <td><input type="radio" name="manage_q2" value="3"> 3</td>
-                <td><input type="radio" name="manage_q2" value="4"> 4</td>
-                <td><input type="radio" name="manage_q2" value="5"> 5</td>
+                <td><input type="radio" name="manage_q2" value="5"> </td>
+                <td><input type="radio" name="manage_q2" value="4"> </td>
+                <td><input type="radio" name="manage_q2" value="3"> </td>
+                <td><input type="radio" name="manage_q2" value="2"> </td>
+                <td><input type="radio" name="manage_q2" value="1"></td>
             </tr>
             <tr>
                 <td>3. Communication of program details</td>
-                <td><input type="radio" name="manage_q3" value="1"> 1</td>
-                <td><input type="radio" name="manage_q3" value="2"> 2</td>
-                <td><input type="radio" name="manage_q3" value="3"> 3</td>
-                <td><input type="radio" name="manage_q3" value="4"> 4</td>
-                <td><input type="radio" name="manage_q3" value="5"> 5</td>
+                <td><input type="radio" name="manage_q3" value="5"> </td>
+                <td><input type="radio" name="manage_q3" value="4"> </td>
+                <td><input type="radio" name="manage_q3" value="3"></td>
+                <td><input type="radio" name="manage_q3" value="2"> </td>
+                <td><input type="radio" name="manage_q3" value="1"> </td>
             </tr>
             <tr>
                 <td> 4. Problem-solving abilities</td>
-                <td><input type="radio" name="manage_q4" value="1"> 1</td>
-                <td><input type="radio" name="manage_q4" value="2"> 2</td>
-                <td><input type="radio" name="manage_q4" value="3"> 3</td>
-                <td><input type="radio" name="manage_q4" value="4"> 4</td>
-                <td><input type="radio" name="manage_q4" value="5"> 5</td>
+                <td><input type="radio" name="manage_q4" value="5"> </td>
+                <td><input type="radio" name="manage_q4" value="4"> </td>
+                <td><input type="radio" name="manage_q4" value="3"> </td>
+                <td><input type="radio" name="manage_q4" value="2"> </td>
+                <td><input type="radio" name="manage_q4" value="1"> </td>
             </tr>
             <tr>
                 <td>5. The  managed time effectively</td>
-                <td><input type="radio" name="manage_q5" value="1"> 1</td>
-                <td><input type="radio" name="manage_q5" value="2"> 2</td>
-                <td><input type="radio" name="manage_q5" value="3"> 3</td>
-                <td><input type="radio" name="manage_q5" value="4"> 4</td>
-                <td><input type="radio" name="manage_q5" value="5"> 5</td>
+                <td><input type="radio" name="manage_q5" value="5"> </td>
+                <td><input type="radio" name="manage_q5" value="4"> </td>
+                <td><input type="radio" name="manage_q5" value="3"> </td>
+                <td><input type="radio" name="manage_q5" value="2"> </td>
+                <td><input type="radio" name="manage_q5" value="1"> </td>
             </tr>
         </table>
 
@@ -229,9 +250,7 @@
         <button type="submit" class="submit-btn">Submit</button>
     </form>
 
-    <div class="home-link">
-        <a href="{% url 'index' %}">Back to the homepage</a>
-    </div>
+
 </div>
 
 <script>

@@ -145,7 +145,7 @@
                         if (choice.fields.question === parseInt('{{ question.id }}')){
                             const mc_choice=document.createElement("div");
                             mc_choice.innerHTML=`
-                            <p>Answer</p>
+                          
                             
                             <label for=option>
                             <input type='radio' id="option_${choice.pk}" name="option_${choice.fields.question}" value="${choice.pk}" ${choice.fields.is_correct ? 'checked' : ''} >
