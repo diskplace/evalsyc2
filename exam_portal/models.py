@@ -8,7 +8,6 @@ class TestResult(models.Model):
     webinar=models.ForeignKey(Webinar, on_delete=models.CASCADE, blank=True, null=True, related_name="test_result")
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     test=models.CharField(max_length=50)
-
     score=models.IntegerField()
 
 

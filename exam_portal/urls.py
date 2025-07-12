@@ -6,6 +6,10 @@ urlpatterns = [
     path("result_data/<int:id>/", views.result_data, name="result_data"),
     path("rounded_data/<int:id>/", views.rounded_data, name="rounded_data"),
     path("display_result/<int:id>/", views.display_result , name="display_result"),
+    path("test_score/<int:id>/<str:type>/", views.test_score, name="test_score"),
+    path("test_data/<int:id>/", views.test_data, name="test_data"),
+   
+   
     path("generate_qr/<int:id>/<str:type>/", views.generate_qr , name="generate_qr"),
     path("qr_evalution/<int:id>/", views.qr_evalution, name="qr_evalution"),
     path("display_qr/<int:id>/<str:type>/", views.display_qr , name="display_qr"),

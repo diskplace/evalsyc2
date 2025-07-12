@@ -32,7 +32,7 @@
           <a href="{% url 'user_dashboard' %}" class="nav-item">Dashboard</a>
           <a href="{% url 'calendar' %}" class="nav-item  ">Upcoming Events</a>
           <a href="{% url 'certificate' %}" class="nav-item active">Certificate</a>
-          <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
+          <a href="{% url 'user_setting' %}" class="nav-item">Settting</a>
       </nav>
       <div class="logout" >
         <a href="{% url 'logout' %}">
@@ -122,7 +122,7 @@
                     <button onclick="downloadCertificate('{{ com_webinar.id }}')" class="btn-download">
                         <i class="fas fa-download"></i> Download
                     </button>
-                    <a href="{%  url 'cert_preview' com_webinar.certifiae.id %}" class="btn-preview">
+                    <a href="{%  url 'cert_preview' com_webinar.id %}" class="btn-preview">
                         <i class="fas fa-eye"></i> Preview
                     </a>
                 </div>

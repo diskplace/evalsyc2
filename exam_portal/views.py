@@ -146,15 +146,35 @@ def test_data(request, id):
     webinar=get_object_or_404(Webinar, id=id)
     test_result=[]
     results=webinar.test_result.all()
+    
     for result in results:
         test_result.append({
             "id":result.id,
             "user":result.user.email,
+            "school_id":result.user.user_profile.school_id,
             "test_type":result.test,
             "score":result.score
         })
     
     return JsonResponse({"test_result":test_result})
+
+
+def test_score(request, id, type):
+    webinar = get_object_or_404(Webinar, id=id)
+    scores = []
+
+  
+    test_score = webinar.test_result.filter(test=type)
+
+    for score in test_score:
+        scores.append(score.score)
+    
+    score_count = Counter(scores)
+
+    return JsonResponse({"scores": dict(score_count)})
+
+    
+
 def generate_qr(request, id, type):
     url = 'http://127.0.0.1:8000'
     
@@ -212,11 +232,6 @@ def qr_evalution(request, id):
         
     return redirect('display_qr', id, type)
 
-
-
-
-        
-    
 
 
 def display_qr(request, id, type):

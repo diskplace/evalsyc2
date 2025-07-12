@@ -32,7 +32,7 @@
           <a href="{% url 'user_dashboard' %}" class="nav-item active">Dashboard</a>
           <a href="{% url 'calendar' %}" class="nav-item ">Upcoming Events</a>
           <a href="{% url 'certificate' %}" class="nav-item">Certificate</a>
-          <a href="{% url 'admin_setting' %}" class="nav-item">Settting</a>
+          <a href="{% url 'user_setting' %}" class="nav-item">Settting</a>
       </nav>
       <div class="logout" >
         <a href="{% url 'logout' %}">
@@ -80,7 +80,7 @@
                   
                   <p class="webinar-descrtiption" >{{ up_webinar.webinar.description|truncatewords:16  }}</p>
                   <div class="webinar-btn-container"> 
-                  <a href="{% url 'webinar_detail' up_webinar.id  %}" class="webinar-btn"> Views details </a>
+                  <a href="{% url 'webinar_detail' up_webinar.webinar.id  %}" class="webinar-btn"> Views details </a>
                   </div>
                 </div>
               </div>
@@ -117,7 +117,7 @@
                   <p class="webinar-descrtiption" >{{ pt_webinar.webinar.description|truncatewords:16  }}</p>
                   <div class="webinar-btn-container"> 
   
-                  <a class="webinar-btn" href="{% url 'webinar_detail' pt_webinar.id %}"> Views details </a>
+                  <a class="webinar-btn" href="{% url 'webinar_detail' pt_webinar.webinar.id %}"> Views details </a>
                   </div>
                 </div>
               </div>

@@ -8,6 +8,9 @@
 
 {% block body %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+
 
 <div class="app">
     <div class="sidebar">
@@ -78,65 +81,32 @@
             <button onclick="DownloadExcel()">Download Evaluation Data</button>
 
         </section>
-<section class="test-section">
-    <h2 class="title">Test Results</h2>
+        <section class="test-section">
+            <h2 class="title">Test Results</h2>
 
-    <div class="test-data-container">
-        <!-- Pre-test Table -->
-        <div class="test-table-container">
-            <h3>Pre-Test Results</h3>
-            <div class="table-responsive">
-                <table class="test-data-table">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Email</th>
-                            <th>Time Submitted</th>
-                            <th>Score</th>
-                            <th>Status</th>
-                            <th>Time Spent</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>user1@school.edu</td>
-                            <td>2023-11-15 09:23:42</td>
-                            <td>85%</td>
-                            <td><span class="completed">Completed</span></td>
-                            <td>23 min</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>user2@school.edu</td>
-                            <td>2023-11-15 10:15:03</td>
-                            <td>92%</td>
-                            <td><span class="completed">Completed</span></td>
-                            <td>18 min</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>user3@school.edu</td>
-                            <td>-</td>
-                            <td>45%</td>
-                            <td><span class="incomplete">In Progress</span></td>
-                            <td>12 min</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>user4@school.edu</td>
-                            <td>2023-11-16 14:42:19</td>
-                            <td>78%</td>
-                            <td><span class="completed">Completed</span></td>
-                            <td>27 min</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="test-container">
+                <div class="container">
+                    <h4>Pre Test</h4>
+                    <div class="bar-wrapper">
+                    <canvas id="pre-test" class="doughnut" ></canvas>
+                </div>
+                </div>
+
+                <div class="container">
+                    <h4>Post Test</h4>
+                    <div class="bar-wrapper">
+                        <canvas id="post-test" class="doughnut" ></canvas>
+                    </div>
+
+                </div>
+
+                
             </div>
-        </div>
+            <button onclick="downloadTestData()">Download Test</button>
 
 
-</section>
+
+        </section>
 
 
 
@@ -154,7 +124,6 @@
 
         console.log("Data fetched:", data);
 
-        // Convert data to CSV
         let csv = "Category,5 (Excellent),4 (Good),3 (Average),2 (Poor),1 (Very Poor)\n";
         csv += `Speaker,${data.speaker.join(",")}\n`;
         csv += `Venue,${data.venue.join(",")}\n`;
@@ -178,91 +147,149 @@
 
         console.log("Download triggered!");
     }
-document.addEventListener('DOMContentLoaded', function() {
+    async function downloadTestData(){
+            console.log("hello")
 
-    async function fetchData(){
-    const id=parseInt("{{ webinar.id }}");
+            const url = await fetch("{% url 'test_data' webinar.id %}");
+            const data= await url.json();
 
-    const evaluation= await fetch(`/exam_portal/rounded_data/${id}`)
+            const workbook=XLSX.utils.book_new();
+            const worksheet=XLSX.utils.json_to_sheet(data.test_result);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "test_data");
+            XLSX.writeFile(workbook, "Test_result.xlsx");
+    }
 
-    const data=await evaluation.json()
-
-    console.log(data)
-    console.log("hello")
     
+    document.addEventListener('DOMContentLoaded', function() {
 
+        async function fetchData(){
+            const id=parseInt("{{ webinar.id }}");
 
+                const evaluation= await fetch(`/exam_portal/rounded_data/${id}`)
 
-    const chartData = {
-        speaker: data.speaker,
-        venue: data.venue,
-        food: data.meal,
-        manage: data.manage,
-        overall: data.overall
-    };
-    
-    const labels = ['5 (Excellent)', '4 (Good)', '3 (Average)', '2 (Poor)', '1 (Very Poor)'];
-    const colors = ['#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#F44336'];
-    
-    const chartIds = ['speaker', 'venue', 'food', 'manage', 'overall'];
-    
-    chartIds.forEach(id => {
-        const ctx = document.getElementById(id).getContext('2d');
-        
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: chartData[id],
-                    backgroundColor: colors,
-                    borderColor: '#fff',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 20
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: id.charAt(0).toUpperCase() + id.slice(1) + ' Evaluation',
-                        font: {
-                            size: 14
+                const data=await evaluation.json()
+
+                console.log(data)
+                console.log("hello")
+                
+                const chartData = {
+                    speaker: data.speaker,
+                    venue: data.venue,
+                    food: data.meal,
+                    manage: data.manage,
+                    overall: data.overall
+                };
+                
+                const labels = ['5 (Excellent)', '4 (Good)', '3 (Average)', '2 (Poor)', '1 (Very Poor)'];
+                const colors = ['#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#F44336'];
+                
+                const chartIds = ['speaker', 'venue', 'food', 'manage', 'overall'];
+                
+                chartIds.forEach(id => {
+                    const ctx = document.getElementById(id).getContext('2d');
+                    
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: chartData[id],
+                                backgroundColor: colors,
+                                borderColor: '#fff',
+                                borderWidth: 1
+                            }]
                         },
-                        padding: {
-                            top: 10,
-                            bottom: 20
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return `${label}: ${value} (${percentage}%)`;
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        boxWidth: 12,
+                                        padding: 20
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: id.charAt(0).toUpperCase() + id.slice(1) + ' Evaluation',
+                                    font: {
+                                        size: 14
+                                    },
+                                    padding: {
+                                        top: 10,
+                                        bottom: 20
+                                    }
+                                },
+
                             }
                         }
+                    });
+                }); 
+        }fetchData()
+
+        async function TestChart(){
+            const graphIds = ['pre-test', 'post-test'];
+
+            const pre_test = "{% url 'test_score' webinar.id 'pre_test' %}";
+            const post_test = "{% url 'test_score' webinar.id 'post_test' %}";
+
+            for (const [index, id] of graphIds.entries()) {
+                const graph = document.getElementById(id);
+                const ctx = graph.getContext("2d");
+
+                const url = (index < 1) ? pre_test : post_test;
+
+        
+                const response = await fetch(url);
+                const json = await response.json();
+
+                console.log("Data JSON:", json);
+
+            
+                const labels = Object.keys(json.scores);
+                const data = Object.values(json.scores);
+
+                const backgroundColor = labels.map((_, i) => randomColor());
+
+                new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Number of students",
+                            data: data,
+                            backgroundColor: backgroundColor
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+
                     }
-                }
+                });
+
             }
-        });
-    });
-    }
-    fetchData()
+        }
+
+        function randomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = 50 + Math.random() * 10;    
+            const lightness = 45 + Math.random() * 10;     
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            }
+        TestChart();
 
 
 
-});
+
+
+})
+           
+
+        
+
+
+   
 </script>
 
 
